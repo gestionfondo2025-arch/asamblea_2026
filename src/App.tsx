@@ -554,12 +554,12 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                             </div>
                           </div>
                         )}
-                        {m.tipo === "libre" && (
+                        {(m.tipo === "libre" || m.tipo === "reforma") && (
                           <div>
-                            <h4 className="font-semibold text-sm text-gray-700 mb-2">Opciones de votación:</h4>
+                            <h4 className="font-semibold text-sm text-gray-700 mb-2">Opciones de votación (SÍ/NO/BLANCO):</h4>
                             {(m.opciones || []).map(op => (
                               <div key={op.id} className="flex items-start gap-2 bg-white rounded-lg p-2 border text-sm mb-1">
-                                <div className="flex-1"><span className="font-semibold">{op.titulo}</span>{op.descripcion && <div className="text-gray-500 text-xs">{op.descripcion}</div>}</div>
+                                <div className="flex-1"><span className="font-semibold">{op.titulo || op.texto}</span>{op.descripcion && <div className="text-gray-500 text-xs">{op.descripcion}</div>}</div>
                                 <button onClick={() => removeOpcion(m.id, op.id)} className="text-red-500 text-xs font-bold">✕</button>
                               </div>
                             ))}
@@ -567,6 +567,26 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                               <input value={nuevaOpcion.titulo} onChange={e => setNuevaOpcion(n => ({ ...n, titulo: e.target.value }))} placeholder="Título propuesta" className="w-full border rounded px-3 py-2 text-sm" />
                               <input value={nuevaOpcion.descripcion} onChange={e => setNuevaOpcion(n => ({ ...n, descripcion: e.target.value }))} placeholder="Descripción (opcional)" className="w-full border rounded px-3 py-2 text-sm" />
                               <button onClick={() => addOpcion(m.id)} className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg font-semibold hover:bg-green-700">+ Agregar opción</button>
+                            </div>
+                          </div>
+                        )}
+                        {m.tipo === "opcion_multiple" && (
+                          <div>
+                            <h4 className="font-semibold text-sm text-gray-700 mb-2">Opciones de selección única:</h4>
+                            {(m.opciones || []).map(op => (
+                              <div key={op.id} className="flex items-start gap-2 bg-white rounded-lg p-2 border text-sm mb-1">
+                                <div className="flex-1">🔘 <span className="font-semibold">{op.texto || op.titulo}</span></div>
+                                <button onClick={() => removeOpcion(m.id, op.id)} className="text-red-500 text-xs font-bold">✕</button>
+                              </div>
+                            ))}
+                            <div className="bg-white rounded-lg p-3 border space-y-2 mt-2">
+                              <input value={nuevaOpcion.titulo} onChange={e => setNuevaOpcion(n => ({ ...n, titulo: e.target.value }))} placeholder="Texto de la opción" className="w-full border rounded px-3 py-2 text-sm" />
+                              <button onClick={async () => {
+                                if (!nuevaOpcion.titulo.trim()) return;
+                                const newOpciones = [...(modulos[m.id].opciones || []), { id: "op_" + Date.now(), texto: nuevaOpcion.titulo }];
+                                await updateModulo(m.id, { opciones: newOpciones });
+                                setNuevaOpcion({ titulo: "", descripcion: "" });
+                              }} className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg font-semibold hover:bg-green-700">+ Agregar opción</button>
                             </div>
                           </div>
                         )}
