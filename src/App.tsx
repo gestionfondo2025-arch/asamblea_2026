@@ -133,6 +133,57 @@ async function saveDelegado(delegado) {
   await supabase.from("delegados").upsert(delegado);
 }
 
+async function fetchQuorum() {
+  try {
+    const { data } = await supabase.from("quorum").select("*");
+    return data || [];
+  } catch { return []; }
+}
+
+async function fetchQuorumConfig() {
+  try {
+    const { data } = await supabase.from("quorum_config").select("*").eq("id", 1).single();
+    return data || { id: 1, minimo: 21, abierto: false };
+  } catch { return { id: 1, minimo: 21, abierto: false }; }
+}
+
+async function saveQuorumConfig(config) {
+  try { await supabase.from("quorum_config").upsert(config); } catch {}
+}
+
+async function registrarAsistencia(delegadoId, tipo) {
+  await supabase.from("quorum").upsert({ delegado_id: delegadoId, tipo, hora: new Date().toISOString() });
+}
+
+async function limpiarQuorum() {
+  try { await supabase.from("quorum").delete().neq("delegado_id", 0); } catch {}
+}
+
+// ─── QUÓRUM HELPERS ───────────────────────────────────────────────────────────
+async function fetchQuorum() {
+  const { data } = await supabase.from("quorum").select("*");
+  return data || [];
+}
+
+async function fetchQuorumConfig() {
+  try {
+    const { data } = await supabase.from("quorum_config").select("*").eq("id", 1).single();
+    return data || { id: 1, minimo: 21, abierto: false };
+  } catch { return { id: 1, minimo: 21, abierto: false }; }
+}
+
+async function saveQuorumConfig(config) {
+  await supabase.from("quorum_config").upsert(config);
+}
+
+async function registrarAsistencia(delegadoId, tipo) {
+  await supabase.from("quorum").upsert({ delegado_id: delegadoId, tipo, hora: new Date().toISOString() });
+}
+
+async function limpiarQuorum() {
+  await supabase.from("quorum").delete().neq("delegado_id", 0);
+}
+
 // ─── COMPONENTES ─────────────────────────────────────────────────────────────
 const Badge = ({ children, color = "gray" }) => {
   const colors = {
@@ -323,6 +374,62 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
   );
 }
 
+
+// ─── CONFIRMACIÓN ASISTENCIA DELEGADO ────────────────────────────────────────
+function ConfirmarAsistencia({ delegado, onConfirmar, onSaltar }) {
+  const [tipo, setTipo] = useState(null);
+  const [confirmado, setConfirmado] = useState(false);
+
+  const handleConfirmar = async () => {
+    if (!tipo) return;
+    await registrarAsistencia(delegado.id, tipo);
+    setConfirmado(true);
+    setTimeout(() => onConfirmar(), 1500);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-6">
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-16 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-3" />
+          <h2 className="text-white text-xl font-bold">Bienvenido, {delegado.nombre.split(" ")[0]}</h2>
+          <p className="text-blue-300 text-sm">{delegado.zona} · {delegado.tipo}</p>
+        </div>
+        {confirmado ? (
+          <div className="bg-green-600 rounded-2xl p-8 text-center text-white">
+            <div className="text-5xl mb-3">✅</div>
+            <div className="text-xl font-bold">¡Asistencia registrada!</div>
+            <div className="text-sm opacity-80 mt-1">Redirigiendo al panel de votación...</div>
+          </div>
+        ) : (
+          <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6">
+            <h3 className="text-white font-bold text-center mb-4">¿Cómo estás participando hoy?</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button onClick={() => setTipo("presencial")}
+                className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "presencial" ? "border-green-400 bg-green-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
+                <div className="text-3xl mb-1">🏢</div>
+                <div>Presencial</div>
+              </button>
+              <button onClick={() => setTipo("virtual")}
+                className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "virtual" ? "border-blue-400 bg-blue-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
+                <div className="text-3xl mb-1">💻</div>
+                <div>Virtual</div>
+              </button>
+            </div>
+            <button onClick={handleConfirmar} disabled={!tipo}
+              className="w-full py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-bold rounded-xl">
+              Confirmar asistencia →
+            </button>
+            <button onClick={onSaltar} className="w-full py-2 text-blue-300 text-xs mt-2 hover:text-white">
+              Saltar este paso (ya registrado)
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── LOGIN DELEGADO ───────────────────────────────────────────────────────────
 function LoginDelegado({ delegados, onLogin }) {
   const [cedulaInput, setCedulaInput] = useState("");
@@ -366,8 +473,34 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
   const [editTitulo, setEditTitulo] = useState("");
   const [editDesc, setEditDesc] = useState("");
   const [saving, setSaving] = useState(false);
+  const [quorumAsistentes, setQuorumAsistentes] = useState([]);
+  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
+
+  useEffect(() => {
+    const loadQuorum = async () => {
+      const [q, qc] = await Promise.all([fetchQuorum(), fetchQuorumConfig()]);
+      setQuorumAsistentes(q);
+      setQuorumConfig(qc);
+    };
+    loadQuorum();
+    const interval = setInterval(loadQuorum, 3000);
+    return () => clearInterval(interval);
+  }, []);
+  const [quorumLista, setQuorumLista] = useState([]);
+  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
+  const [quorumMinInput, setQuorumMinInput] = useState("21");
 
   const totalDelegados = delegados.filter(d => d.activo !== false).length;
+
+  useEffect(() => {
+    fetchQuorumConfig().then(cfg => { setQuorumConfig(cfg); setQuorumMinInput(String(cfg.minimo)); });
+    fetchQuorum().then(setQuorumLista);
+    const iv = setInterval(() => {
+      fetchQuorum().then(setQuorumLista);
+      fetchQuorumConfig().then(cfg => { setQuorumConfig(cfg); setQuorumMinInput(String(cfg.minimo)); });
+    }, 3000);
+    return () => clearInterval(iv);
+  }, []);
 
   const updateModulo = async (id, changes) => {
     setSaving(true);
@@ -447,7 +580,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
     a.download = "resultados_fonsecuritas_2026.txt"; a.click();
   };
 
-  const nav = [{ id: "dashboard", label: "🏠 Dashboard" }, { id: "modulos", label: "🗳️ Módulos" }, { id: "delegados", label: "👥 Delegados" }, { id: "resultados", label: "📊 Resultados" }];
+  const nav = [{ id: "dashboard", label: "🏠 Dashboard" }, { id: "quorum", label: "✅ Quórum" }, { id: "modulos", label: "🗳️ Módulos" }, { id: "delegados", label: "👥 Delegados" }, { id: "resultados", label: "📊 Resultados" }];
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -602,6 +735,121 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
           </div>
         )}
 
+
+        {vista === "quorum" && (
+          <div>
+            <h2 className="text-blue-950 font-bold text-xl mb-4">Control de Quórum</h2>
+            
+            {/* Config */}
+            <div className="bg-white rounded-2xl border shadow-sm p-5 mb-5">
+              <h3 className="font-bold text-gray-800 mb-3">⚙️ Configuración de quórum</h3>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div>
+                  <label className="text-sm text-gray-600 block mb-1">Mínimo de delegados requeridos</label>
+                  <input type="number" value={quorumMinInput} onChange={e => setQuorumMinInput(e.target.value)}
+                    className="border rounded-lg px-3 py-2 text-sm w-24 font-mono text-center" />
+                </div>
+                <button onClick={async () => {
+                  const cfg = { ...quorumConfig, minimo: parseInt(quorumMinInput) || 21 };
+                  setQuorumConfig(cfg);
+                  await saveQuorumConfig(cfg);
+                }} className="mt-5 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">
+                  Guardar mínimo
+                </button>
+                <button onClick={async () => {
+                  const cfg = { ...quorumConfig, abierto: !quorumConfig.abierto };
+                  setQuorumConfig(cfg);
+                  await saveQuorumConfig(cfg);
+                }} className={`mt-5 px-4 py-2 text-sm rounded-lg font-semibold text-white ${quorumConfig.abierto ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
+                  {quorumConfig.abierto ? "🔒 Cerrar registro" : "🟢 Abrir registro de asistencia"}
+                </button>
+                <button onClick={async () => {
+                  if (window.confirm("¿Seguro? Esto borrará todos los registros de asistencia.")) {
+                    await limpiarQuorum();
+                    setQuorumLista([]);
+                  }
+                }} className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg font-semibold hover:bg-gray-300">
+                  🗑️ Limpiar registros
+                </button>
+              </div>
+            </div>
+
+            {/* Estado quórum */}
+            {(() => {
+              const presentes = quorumLista.length;
+              const minimo = quorumConfig.minimo;
+              const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
+              const hayQuorum = presentes >= minimo;
+              return (
+                <div className={`rounded-2xl p-6 mb-5 text-white ${hayQuorum ? "bg-green-700" : "bg-red-700"}`}>
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <div className="text-5xl font-black">{presentes}</div>
+                      <div className="text-lg opacity-90">delegados presentes</div>
+                      <div className="text-sm opacity-75 mt-1">Mínimo requerido: {minimo} · Total habilitados: {totalDelegados}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-6xl">{hayQuorum ? "✅" : "⏳"}</div>
+                      <div className="text-xl font-bold mt-1">{hayQuorum ? "¡QUÓRUM ALCANZADO!" : "Sin quórum aún"}</div>
+                      <div className="text-sm opacity-75">{pct}% de asistencia · Faltan {Math.max(0, minimo - presentes)}</div>
+                    </div>
+                  </div>
+                  <div className="mt-4 bg-white/20 rounded-full h-4">
+                    <div className="bg-white h-4 rounded-full transition-all duration-700" style={{ width: `${Math.min(100, pct)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Registro manual por admin */}
+            <div className="bg-white rounded-2xl border shadow-sm p-5 mb-5">
+              <h3 className="font-bold text-gray-800 mb-3">📋 Registro manual de asistencia</h3>
+              <div className="overflow-auto max-h-96">
+                <table className="w-full text-sm">
+                  <thead><tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
+                    <th className="px-3 py-2 text-left">Nombre</th>
+                    <th className="px-3 py-2 text-left">Zona</th>
+                    <th className="px-3 py-2 text-left">Tipo</th>
+                    <th className="px-3 py-2 text-center">Presencial</th>
+                    <th className="px-3 py-2 text-center">Virtual</th>
+                    <th className="px-3 py-2 text-center">Estado</th>
+                  </tr></thead>
+                  <tbody>
+                    {delegados.filter(d => d.activo !== false).map(d => {
+                      const reg = quorumLista.find(q => q.delegado_id === d.id);
+                      return (
+                        <tr key={d.id} className={`border-b last:border-0 ${reg ? "bg-green-50" : ""}`}>
+                          <td className="px-3 py-2 font-medium text-xs">{d.nombre}</td>
+                          <td className="px-3 py-2 text-gray-500 text-xs">{d.zona}</td>
+                          <td className="px-3 py-2"><Badge color={d.tipo === "PRINCIPAL" ? "blue" : "yellow"}>{d.tipo}</Badge></td>
+                          <td className="px-3 py-2 text-center">
+                            <button onClick={async () => {
+                              await registrarAsistencia(d.id, "presencial");
+                              fetchQuorum().then(setQuorumLista);
+                            }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "presencial" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-green-100"}`}>
+                              🏢 Presencial
+                            </button>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            <button onClick={async () => {
+                              await registrarAsistencia(d.id, "virtual");
+                              fetchQuorum().then(setQuorumLista);
+                            }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "virtual" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-blue-100"}`}>
+                              💻 Virtual
+                            </button>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {reg ? <Badge color="green">✓ {reg.tipo}</Badge> : <Badge color="gray">Ausente</Badge>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
         {vista === "delegados" && (
           <div>
             <h2 className="text-blue-950 font-bold text-xl mb-4">Registro de delegados</h2>
@@ -700,6 +948,28 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               })}
             </div>
           </div>
+        )}
+        {vista === "quorum" && (
+          <PanelQuorum
+            delegados={delegados}
+            quorumAsistentes={quorumAsistentes}
+            quorumConfig={quorumConfig}
+            onUpdateConfig={async (config) => {
+              setQuorumConfig(config);
+              await saveQuorumConfig(config);
+            }}
+            onRegistrarManual={async (delegadoId, tipo) => {
+              await registrarAsistencia(delegadoId, tipo);
+              const q = await fetchQuorum();
+              setQuorumAsistentes(q);
+            }}
+            onLimpiar={async () => {
+              if (confirm("¿Reiniciar toda la lista de asistencia?")) {
+                await limpiarQuorum();
+                setQuorumAsistentes([]);
+              }
+            }}
+          />
         )}
       </div>
     </div>
@@ -811,8 +1081,185 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
   );
 }
 
+
+// ─── PANTALLA QUÓRUM DELEGADO ─────────────────────────────────────────────────
+function ConfirmarAsistencia({ delegados, quorumConfig, quorumAsistentes, onConfirmar, onExit }) {
+  const [cedulaInput, setCedulaInput] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
+  const totalDelegados = delegados.filter(d => d.activo !== false).length;
+  const minimo = quorumConfig?.minimo || 21;
+  const presentes = quorumAsistentes.length;
+  const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
+  const hayQuorum = presentes >= minimo;
+  const yaConfirmado = (ced) => quorumAsistentes.find(q => {
+    const d = delegados.find(del => del.id === q.delegado_id);
+    return d && d.cedula === ced;
+  });
+
+  const handleConfirmar = async () => {
+    const found = delegados.find(d => d.cedula && d.cedula.trim() === cedulaInput.trim() && d.activo !== false);
+    if (!found) { setError("Cédula no encontrada. Verifica con la mesa directiva."); return; }
+    if (yaConfirmado(cedulaInput.trim())) { setError("Ya confirmaste tu asistencia anteriormente."); return; }
+    await onConfirmar(found.id, "virtual");
+    setMensaje(`✅ ¡Bienvenido/a ${found.nombre.split(" ")[0]}! Asistencia confirmada.`);
+    setCedulaInput(""); setError("");
+    setTimeout(() => setMensaje(""), 4000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-6">
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-16 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-3" />
+          <h1 className="text-white text-xl font-bold">REGISTRO DE ASISTENCIA</h1>
+          <p className="text-blue-300 text-sm">Asamblea General FONSECURITAS 2026</p>
+        </div>
+
+        <div className={`rounded-2xl p-5 mb-4 text-center border-2 ${hayQuorum ? "bg-green-900/40 border-green-500" : "bg-red-900/30 border-red-500"}`}>
+          <div className={`text-5xl font-black mb-1 ${hayQuorum ? "text-green-400" : "text-red-400"}`}>{presentes}</div>
+          <div className="text-white text-sm font-semibold">delegados confirmados</div>
+          <div className="text-blue-200 text-xs mt-1">{pct}% — Mínimo requerido: {minimo}</div>
+          <div className={`mt-2 text-sm font-bold ${hayQuorum ? "text-green-400" : "text-yellow-400"}`}>
+            {hayQuorum ? "✅ QUÓRUM ALCANZADO" : `⏳ Faltan ${minimo - presentes} para quórum`}
+          </div>
+          <div className="mt-2 bg-white/10 rounded-full h-3">
+            <div className={`h-3 rounded-full transition-all duration-700 ${hayQuorum ? "bg-green-500" : "bg-red-500"}`}
+              style={{ width: `${Math.min(pct, 100)}%` }} />
+          </div>
+        </div>
+
+        {!quorumConfig?.abierto ? (
+          <div className="bg-white/10 rounded-2xl p-6 text-center text-blue-200">
+            <div className="text-3xl mb-2">⏳</div>
+            <div className="font-semibold">El registro de asistencia no está abierto aún</div>
+            <div className="text-sm mt-1">El administrador habilitará el registro en breve</div>
+          </div>
+        ) : (
+          <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-5">
+            {mensaje && <div className="bg-green-500 text-white rounded-xl p-3 mb-3 text-center text-sm font-bold">{mensaje}</div>}
+            <label className="text-blue-200 text-sm font-semibold block mb-2">Confirma tu asistencia con tu cédula</label>
+            <input type="text" value={cedulaInput} onChange={e => { setCedulaInput(e.target.value); setError(""); }}
+              onKeyDown={e => e.key === "Enter" && handleConfirmar()}
+              placeholder="Número de cédula"
+              className="w-full bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-blue-400 text-center text-lg font-mono tracking-widest" />
+            {error && <p className="text-red-400 text-xs mt-2 text-center">{error}</p>}
+            <button onClick={handleConfirmar} className="mt-3 w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl">
+              ✅ Confirmar mi asistencia
+            </button>
+          </div>
+        )}
+        <button onClick={onExit} className="mt-4 w-full py-2 text-blue-400 text-sm hover:text-white text-center">← Volver al inicio</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── PANEL QUÓRUM ADMIN ───────────────────────────────────────────────────────
+function PanelQuorum({ delegados, quorumAsistentes, quorumConfig, onUpdateConfig, onRegistrarManual, onLimpiar }) {
+  const [minimoInput, setMinimoInput] = useState(quorumConfig?.minimo || 21);
+  const [busqueda, setBusqueda] = useState("");
+
+  const totalDelegados = delegados.filter(d => d.activo !== false).length;
+  const presentes = quorumAsistentes.length;
+  const minimo = quorumConfig?.minimo || 21;
+  const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
+  const hayQuorum = presentes >= minimo;
+
+  const getAsistente = (delegadoId) => quorumAsistentes.find(q => q.delegado_id === delegadoId);
+  const delegadosFiltrados = delegados.filter(d => d.activo !== false && d.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+
+  // Group by zona
+  const zonas = ["SEGURIDAD", "AVIACION", "DIR. ÁREA NEGOCIOS 1", "DIR. ÁREA NEGOCIOS 2", "DIR. ÁREA NEGOCIOS 3", "ADMINISTRATIVOS"];
+
+  return (
+    <div>
+      <h2 className="text-blue-950 font-bold text-xl mb-4">Verificación de Quórum</h2>
+
+      {/* Contador principal */}
+      <div className={`rounded-2xl p-6 mb-5 text-white ${hayQuorum ? "bg-green-700" : "bg-red-700"}`}>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <div className="text-5xl font-black">{presentes} / {totalDelegados}</div>
+            <div className="text-sm opacity-80 mt-1">delegados presentes · {pct}%</div>
+            <div className="text-lg font-bold mt-1">{hayQuorum ? "✅ QUÓRUM ALCANZADO" : `⏳ Faltan ${minimo - presentes} delegados`}</div>
+          </div>
+          <div className="text-6xl">{hayQuorum ? "✅" : "⏳"}</div>
+        </div>
+        <div className="bg-white/20 rounded-full h-4">
+          <div className="bg-white h-4 rounded-full transition-all duration-700" style={{ width: `${Math.min(pct, 100)}%` }} />
+        </div>
+      </div>
+
+      {/* Configuración */}
+      <div className="bg-white rounded-xl border p-4 mb-4 shadow-sm">
+        <h3 className="font-bold text-gray-800 mb-3">⚙️ Configuración de quórum</h3>
+        <div className="flex gap-3 items-end flex-wrap">
+          <div>
+            <label className="text-xs text-gray-600 font-semibold block mb-1">Mínimo de delegados para quórum</label>
+            <input type="number" value={minimoInput} onChange={e => setMinimoInput(Number(e.target.value))}
+              className="border rounded-lg px-3 py-2 text-sm w-24 font-bold text-center" min={1} max={totalDelegados} />
+          </div>
+          <button onClick={() => onUpdateConfig({ ...quorumConfig, minimo: minimoInput })}
+            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
+          <button onClick={() => onUpdateConfig({ ...quorumConfig, abierto: !quorumConfig?.abierto })}
+            className={`px-4 py-2 text-white text-sm rounded-lg font-semibold ${quorumConfig?.abierto ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
+            {quorumConfig?.abierto ? "🔒 Cerrar registro" : "🔓 Abrir registro"}
+          </button>
+          <button onClick={onLimpiar} className="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg font-semibold hover:bg-gray-600">
+            🗑️ Reiniciar asistencia
+          </button>
+        </div>
+      </div>
+
+      {/* Lista de delegados */}
+      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+        <div className="p-3 border-b bg-gray-50 flex items-center gap-3">
+          <input value={busqueda} onChange={e => setBusqueda(e.target.value)}
+            placeholder="🔍 Buscar delegado..." className="flex-1 border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
+          <span className="text-xs text-gray-500 whitespace-nowrap">{presentes} confirmados</span>
+        </div>
+        <div className="max-h-96 overflow-y-auto">
+          {zonas.map(zona => {
+            const dels = delegadosFiltrados.filter(d => d.zona === zona);
+            if (dels.length === 0) return null;
+            return (
+              <div key={zona}>
+                <div className="bg-blue-50 px-4 py-1.5 text-xs font-bold text-blue-800 uppercase tracking-wide border-b">{zona}</div>
+                {dels.map(d => {
+                  const asistente = getAsistente(d.id);
+                  return (
+                    <div key={d.id} className={`flex items-center justify-between px-4 py-2.5 border-b last:border-0 ${asistente ? "bg-green-50" : ""}`}>
+                      <div>
+                        <div className={`text-sm font-medium ${asistente ? "text-green-800" : "text-gray-800"}`}>{d.nombre}</div>
+                        <div className="text-xs text-gray-400">{d.ciudad} · {d.tipo}{asistente ? ` · ${asistente.tipo === "virtual" ? "🖥️ Virtual" : "🏢 Presencial"} · ${new Date(asistente.hora).toLocaleTimeString("es-CO", {hour: "2-digit", minute: "2-digit"})}` : ""}</div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-2">
+                        {asistente ? (
+                          <span className="text-green-600 font-bold text-sm">✅ Presente</span>
+                        ) : (
+                          <div className="flex gap-1">
+                            <button onClick={() => onRegistrarManual(d.id, "presencial")}
+                              className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded font-semibold hover:bg-blue-200">🏢 Pres.</button>
+                            <button onClick={() => onRegistrarManual(d.id, "virtual")}
+                              className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded font-semibold hover:bg-purple-200">🖥️ Virt.</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── INICIO ───────────────────────────────────────────────────────────────────
-function PantallaInicio({ onVotante, onAdmin, onPublico }) {
+function PantallaInicio({ onVotante, onAdmin, onPublico, onQuorum }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
@@ -822,6 +1269,7 @@ function PantallaInicio({ onVotante, onAdmin, onPublico }) {
         <p className="text-blue-300 text-sm mb-8">Sistema Digital de Votación — Asamblea Mixta Presencial/Virtual</p>
         <div className="space-y-3">
           <button onClick={onVotante} className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-lg shadow-lg transition-all hover:scale-105">🗳️ Soy delegado — Votar</button>
+          <button onClick={onQuorum} className="w-full py-4 bg-green-700 hover:bg-green-600 text-white font-semibold rounded-2xl transition-all">✅ Confirmar mi asistencia</button>
           <button onClick={onPublico} className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold rounded-2xl transition-all">📊 Ver resultados en pantalla</button>
           <button onClick={onAdmin} className="w-full py-3 bg-transparent hover:bg-white/10 border border-white/20 text-blue-300 hover:text-white text-sm font-semibold rounded-2xl transition-all">⚙️ Panel administrador</button>
         </div>
@@ -836,8 +1284,11 @@ export default function App() {
   const [pantalla, setPantalla] = useState("inicio");
   const [adminLogueado, setAdminLogueado] = useState(false);
   const [delegadoActivo, setDelegadoActivo] = useState(null);
+  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [modulos, setModulos] = useState(MODULOS_INICIALES);
   const [delegados, setDelegados] = useState(DELEGADOS_INICIALES);
+  const [quorumAsistentes, setQuorumAsistentes] = useState([]);
+  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
 
@@ -845,16 +1296,20 @@ export default function App() {
   useEffect(() => {
     const init = async () => {
       await initDB(MODULOS_INICIALES, DELEGADOS_INICIALES);
-      const [mods, dels] = await Promise.all([fetchModulos(), fetchDelegados()]);
+      const [mods, dels, q, qc] = await Promise.all([fetchModulos(), fetchDelegados(), fetchQuorum(), fetchQuorumConfig()]);
       if (mods) setModulos(mods);
       if (dels.length > 0) setDelegados(dels);
+      setQuorumAsistentes(q);
+      setQuorumConfig(qc);
       setLoading(false);
     };
     init();
+    fetchQuorumConfig().then(setQuorumConfig);
     intervalRef.current = setInterval(async () => {
       const [mods, dels] = await Promise.all([fetchModulos(), fetchDelegados()]);
       if (mods) setModulos(mods);
       if (dels.length > 0) setDelegados(dels);
+      fetchQuorumConfig().then(setQuorumConfig);
     }, 3000);
     return () => clearInterval(intervalRef.current);
   }, []);
@@ -879,11 +1334,13 @@ export default function App() {
     );
   }
 
+  if (pantalla === "quorum") return <ConfirmarAsistencia delegados={delegados} quorumConfig={quorumConfig} quorumAsistentes={quorumAsistentes} onConfirmar={async (id, tipo) => { await registrarAsistencia(id, tipo); const q = await fetchQuorum(); setQuorumAsistentes(q); }} onExit={() => setPantalla("inicio")} />;
   if (pantalla === "admin_login") return <LoginAdmin onLogin={() => { setAdminLogueado(true); setPantalla("admin"); }} onVolver={() => setPantalla("inicio")} />;
   if (pantalla === "admin" && adminLogueado) return <PanelAdmin modulos={modulos} setModulos={setModulos} delegados={delegados} setDelegados={setDelegados} onExit={() => { setAdminLogueado(false); setPantalla("inicio"); }} />;
-  if (pantalla === "login_votante") return <LoginDelegado delegados={delegados.filter(d => d.activo !== false)} onLogin={d => { setDelegadoActivo(d); setPantalla("votacion"); }} />;
+  if (pantalla === "login_votante") return <LoginDelegado delegados={delegados.filter(d => d.activo !== false)} onLogin={d => { setDelegadoActivo(d); setPantalla(quorumConfig.abierto ? "confirmar_asistencia" : "votacion"); }} />;
+  if (pantalla === "confirmar_asistencia" && delegadoActivo) return <ConfirmarAsistencia delegado={delegadoActivo} onConfirmar={() => setPantalla("votacion")} onSaltar={() => setPantalla("votacion")} />;
   if (pantalla === "votacion" && delegadoActivo) return <PantallaVotacion modulos={modulos} delegado={delegadoActivo} onVotar={handleVotar} onExit={() => { setDelegadoActivo(null); setPantalla("inicio"); }} />;
   if (pantalla === "publico") return <PantallaPublica modulos={modulos} delegados={delegados} onVolver={() => setPantalla("inicio")} />;
 
-  return <PantallaInicio onVotante={() => setPantalla("login_votante")} onAdmin={() => setPantalla("admin_login")} onPublico={() => setPantalla("publico")} />;
+  return <PantallaInicio onVotante={() => setPantalla("login_votante")} onAdmin={() => setPantalla("admin_login")} onPublico={() => setPantalla("publico")} onQuorum={() => setPantalla("quorum")} />;
 }
