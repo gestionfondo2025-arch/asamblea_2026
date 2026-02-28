@@ -487,7 +487,6 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
     return () => clearInterval(interval);
   }, []);
   const [quorumLista, setQuorumLista] = useState([]);
-  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [quorumMinInput, setQuorumMinInput] = useState("21");
 
   const totalDelegados = delegados.filter(d => d.activo !== false).length;
@@ -1284,7 +1283,6 @@ export default function App() {
   const [pantalla, setPantalla] = useState("inicio");
   const [adminLogueado, setAdminLogueado] = useState(false);
   const [delegadoActivo, setDelegadoActivo] = useState(null);
-  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [modulos, setModulos] = useState(MODULOS_INICIALES);
   const [delegados, setDelegados] = useState(DELEGADOS_INICIALES);
   const [quorumAsistentes, setQuorumAsistentes] = useState([]);
