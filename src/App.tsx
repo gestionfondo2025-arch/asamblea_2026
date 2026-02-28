@@ -8,7 +8,7 @@ const SUPABASE_KEY = "sb_publishable_PoT-Y_jSM8E9Itbzc0OiUw_scTqTO1Q";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ─── LOGO BASE64 ─────────────────────────────────────────────────────────────
-const LOGO_B64 = "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAEZAgADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiuHuvjD4KsPGk/hG68SafaeI4FjZ7C5l8p8OAUALYUkgg4BJ5HHIruKlSjK/K72N6uHrUFF1YOPMrq6auns1fdPuFFFFUYBRXC+M/jN4J+Ht/a2HiLxPYaZf3MixRWjybpiWIC5RcsAdw5IA75xXdVKkm2k9jWVKpCMZzi0pbNrR+ncKKKKoyCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACsnxFr9n4W0HUdY1GUQWFhA9zPJ6IoLHA7nA4Hc8VrV8mf8ABQ34pDwj8KbfwnbSL9v8STbZAGG5LaIqzHGcjc2xc4wRuFc2IrLD0pVH0R7uR5XPOczoYCH25JPyW8n8kmz88viB401j4j+N9a8TatIZ9Q1W5e4lOc7c8Ko9lGFHsBXf/C39lP4nfFqOG50jw5LZ6VIQRqep/6LA6ngMpbLOPdFavHtpxX7v/wDBO/4Wt4F+Ctxrc0bQ6h4jvWuGGdu6CLMcXXknhpB7Piv0rKcKqFJVqqtKXlsj+POMuI6ua4+WBwknGhBuKSer6N38+nax7D8I/gH4K+CmlG08K6QtuznN1qEx824u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UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH/2Q==";
+const LOGO_URL = "/logo.jpeg";
 
 // ─── DATOS INICIALES ──────────────────────────────────────────────────────────
 const DELEGADOS_INICIALES = [
@@ -179,7 +179,7 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col">
       <div className="bg-white/10 backdrop-blur border-b border-white/20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-10 object-contain bg-white rounded px-2" />
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-10 object-contain bg-white rounded px-2" />
           <div>
             <div className="text-white font-bold text-lg">ASAMBLEA GENERAL 2026</div>
             <div className="text-blue-200 text-sm">Panel de Votación</div>
@@ -336,7 +336,7 @@ function LoginDelegado({ delegados, onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-20 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-4" />
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-20 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-4" />
           <h1 className="text-white text-2xl font-bold">ASAMBLEA GENERAL 2026</h1>
           <p className="text-blue-300 text-sm mt-1">Sistema de Votación Digital</p>
         </div>
@@ -453,7 +453,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <div className="bg-blue-950 text-white px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-9 object-contain bg-white rounded px-2" />
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-9 object-contain bg-white rounded px-2" />
           <div>
             <div className="font-bold text-sm">Panel Administrador — Asamblea 2026</div>
             <div className="text-blue-300 text-xs">{saving ? "💾 Guardando..." : "✅ Sincronizado con Supabase"}</div>
@@ -693,7 +693,7 @@ function LoginAdmin({ onLogin, onVolver }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
-          <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-16 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-3" />
+          <img src={LOGO_URL} alt="Fonsecuritas" className="h-16 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-3" />
           <h2 className="text-white text-xl font-bold">Acceso Administrador</h2>
         </div>
         <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6">
@@ -734,7 +734,7 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
       <div className="bg-white/10 backdrop-blur border-b border-white/20 px-6 py-4 text-center">
-        <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-12 object-contain bg-white rounded-xl px-4 py-1.5 mx-auto mb-2" />
+        <img src={LOGO_URL} alt="Fonsecuritas" className="h-12 object-contain bg-white rounded-xl px-4 py-1.5 mx-auto mb-2" />
         <div className="text-white text-2xl font-black">ASAMBLEA GENERAL FONSECURITAS 2026</div>
         <div className="text-blue-300 text-sm">Resultados en tiempo real</div>
       </div>
@@ -796,7 +796,7 @@ function PantallaInicio({ onVotante, onAdmin, onPublico }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
-        <img src={`data:image/jpeg;base64,${LOGO_B64}`} alt="Fonsecuritas" className="h-24 object-contain bg-white rounded-2xl px-6 py-3 mx-auto mb-6 shadow-2xl" />
+        <img src={LOGO_URL} alt="Fonsecuritas" className="h-24 object-contain bg-white rounded-2xl px-6 py-3 mx-auto mb-6 shadow-2xl" />
         <h1 className="text-white text-3xl font-black tracking-wide mb-1">ASAMBLEA GENERAL</h1>
         <h2 className="text-red-400 text-2xl font-black mb-2">FONSECURITAS 2026</h2>
         <p className="text-blue-300 text-sm mb-8">Sistema Digital de Votación — Asamblea Mixta Presencial/Virtual</p>
