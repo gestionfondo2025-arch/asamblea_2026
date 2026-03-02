@@ -441,7 +441,7 @@ function ConfirmarAsistencia({ delegado, onConfirmar, onSaltar }) {
 }
 
 // ─── LOGIN DELEGADO ───────────────────────────────────────────────────────────
-function LoginDelegado({ delegados, onLogin }) {
+function LoginDelegado({ delegados, onLogin, soloAsistencia = false, onVolver = null }) {
   const [cedulaInput, setCedulaInput] = useState("");
   const [error, setError] = useState("");
   const handleLogin = () => {
@@ -465,8 +465,9 @@ function LoginDelegado({ delegados, onLogin }) {
             className="w-full bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-blue-400 text-center text-lg font-mono tracking-widest" />
           {error && <p className="text-red-400 text-xs mt-2 text-center">{error}</p>}
           <button onClick={handleLogin} className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all">
-            Ingresar al sistema de votación
+            {soloAsistencia ? "Confirmar asistencia →" : "Ingresar al sistema de votación"}
           </button>
+          {onVolver && <button onClick={onVolver} className="mt-2 w-full py-2 text-blue-300 text-sm hover:text-white">← Volver al inicio</button>}
         </div>
         <p className="text-blue-400 text-xs text-center mt-4">Si tienes problemas para ingresar, acércate a la mesa directiva</p>
       </div>
@@ -1271,7 +1272,8 @@ export default function App() {
     );
   }
 
-  if (pantalla === "quorum") return <ConfirmarAsistencia delegados={delegados} quorumConfig={quorumConfig} quorumAsistentes={quorumAsistentes} onConfirmar={async (id, tipo) => { await registrarAsistencia(id, tipo); const q = await fetchQuorum(); setQuorumAsistentes(q); }} onExit={() => setPantalla("inicio")} />;
+  if (pantalla === "quorum") return <LoginDelegado delegados={delegados.filter(d => d.activo !== false)} onLogin={d => { setDelegadoActivo(d); setPantalla("solo_asistencia"); }} soloAsistencia={true} onVolver={() => setPantalla("inicio")} />;
+  if (pantalla === "solo_asistencia" && delegadoActivo) return <ConfirmarAsistencia delegado={delegadoActivo} onConfirmar={() => { setDelegadoActivo(null); setPantalla("inicio"); }} onSaltar={() => { setDelegadoActivo(null); setPantalla("inicio"); }} />;
   if (pantalla === "admin_login") return <LoginAdmin onLogin={() => { setAdminLogueado(true); setPantalla("admin"); }} onVolver={() => setPantalla("inicio")} />;
   if (pantalla === "admin" && adminLogueado) return <PanelAdmin modulos={modulos} setModulos={setModulos} delegados={delegados} setDelegados={setDelegados} onExit={() => { setAdminLogueado(false); setPantalla("inicio"); }} />;
   if (pantalla === "login_votante") return <LoginDelegado delegados={delegados.filter(d => d.activo !== false)} onLogin={d => { setDelegadoActivo(d); setPantalla(quorumConfig.abierto ? "confirmar_asistencia" : "votacion"); }} />;
