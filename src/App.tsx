@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 // ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
@@ -159,33 +159,6 @@ async function limpiarQuorum() {
   try { await supabase.from("quorum").delete().neq("delegado_id", 0); } catch {}
 }
 
-// ─── QUÓRUM HELPERS ───────────────────────────────────────────────────────────
-async function fetchQuorum() {
-  const { data } = await supabase.from("quorum").select("*");
-  return data || [];
-}
-
-async function fetchQuorumConfig() {
-  try {
-    const { data } = await supabase.from("quorum_config").select("*").eq("id", 1).single();
-    return data || { id: 1, minimo: 21, abierto: false };
-  } catch { return { id: 1, minimo: 21, abierto: false }; }
-}
-
-async function saveQuorumConfig(config) {
-  await supabase.from("quorum_config").upsert(config);
-}
-
-async function registrarAsistencia(delegadoId, tipo) {
-  await supabase.from("quorum").upsert({ delegado_id: delegadoId, tipo, hora: new Date().toISOString() });
-}
-
-async function limpiarQuorum() {
-  await supabase.from("quorum").delete().neq("delegado_id", 0);
-}
-
-// ─── COMPONENTES ─────────────────────────────────────────────────────────────
-const Badge = ({ children, color = "gray" }) => {
   const colors = {
     green: "bg-green-100 text-green-800 border-green-300",
     red: "bg-red-100 text-red-800 border-red-300",
@@ -763,7 +736,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                   {quorumConfig.abierto ? "🔒 Cerrar registro" : "🟢 Abrir registro de asistencia"}
                 </button>
                 <button onClick={async () => {
-                  if (window.confirm("¿Seguro? Esto borrará todos los registros de asistencia.")) {
+                  if (confirm("¿Seguro? Esto borrará todos los registros de asistencia.")) {
                     await limpiarQuorum();
                     setQuorumLista([]);
                   }
