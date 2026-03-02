@@ -159,6 +159,7 @@ async function limpiarQuorum() {
   try { await supabase.from("quorum").delete().neq("delegado_id", 0); } catch {}
 }
 
+const Badge = ({ children, color = "gray" }) => {
   const colors = {
     green: "bg-green-100 text-green-800 border-green-300",
     red: "bg-red-100 text-red-800 border-red-300",
