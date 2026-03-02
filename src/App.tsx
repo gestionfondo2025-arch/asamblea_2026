@@ -79,7 +79,41 @@ const AUXILIOS_SOLIDARIOS = [
 
 const ADMIN_PASSWORD = "Fonse2025";
 
+const OPCIONES_ORDEN_DIA = [
+  { id: "od1", titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día presentado por la mesa directiva" },
+];
+
+const OPCIONES_MESA_DIRECTIVA = [
+  { id: "md1", titulo: "Presidente de la Asamblea", descripcion: "Elección del Presidente que dirigirá la Asamblea General 2026" },
+  { id: "md2", titulo: "Vicepresidente de la Asamblea", descripcion: "Elección del Vicepresidente de la Asamblea General 2026" },
+  { id: "md3", titulo: "Secretario de la Asamblea", descripcion: "Elección del Secretario encargado del acta de la Asamblea General 2026" },
+];
+
+const OPCIONES_REGLAMENTO = [
+  { id: "rg1", titulo: "Aprobación del Reglamento de la Asamblea", descripcion: "Lectura y aprobación del reglamento que regirá el desarrollo de la Asamblea General 2026" },
+];
+
+const OPCIONES_COMISIONES = [
+  { id: "com1", titulo: "Comisión de Revisión y Aprobación del Acta (3 miembros)", descripcion: "Comisión encargada de revisar y aprobar el acta de la asamblea" },
+  { id: "com2", titulo: "Comisión de Clasificación y Enumeración de Proposiciones (2 miembros)", descripcion: "Comisión encargada de clasificar y enumerar las proposiciones presentadas" },
+  { id: "com3", titulo: "Comisión de Escrutinios (2 miembros)", descripcion: "Comisión encargada de verificar y validar los resultados de las votaciones" },
+];
+
+const OPCIONES_ESTADOS_FINANCIEROS = [
+  { id: "ef1", titulo: "Aprobación de Estados Financieros 2025", descripcion: "Aprobación de los estados financieros con corte a 31 de diciembre de 2025" },
+];
+
+const OPCIONES_EXCEDENTES = [
+  { id: "ex1", titulo: "Aprobación del proyecto de distribución de excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025" },
+];
+
 const MODULOS_INICIALES = {
+  ordenDia: { id: "ordenDia", titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_ORDEN_DIA, activa: false, cerrada: false, votos: {} },
+  mesaDirectiva: { id: "mesaDirectiva", titulo: "Elección Mesa Directiva", descripcion: "Elección del Presidente, Vicepresidente y Secretario de la Asamblea 2026", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  reglamento: { id: "reglamento", titulo: "Aprobación del Reglamento", descripcion: "Lectura y aprobación del Reglamento de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_REGLAMENTO, activa: false, cerrada: false, votos: {} },
+  comisiones: { id: "comisiones", titulo: "Elección de Comisiones", descripcion: "Elección de las tres comisiones de trabajo de la Asamblea 2026", tipo: "reforma", opciones: OPCIONES_COMISIONES, activa: false, cerrada: false, votos: {} },
+  estadosFinancieros: { id: "estadosFinancieros", titulo: "Aprobación Estados Financieros 2025", descripcion: "Aprobación de estados financieros con corte a 31 de diciembre de 2025", tipo: "reforma", opciones: OPCIONES_ESTADOS_FINANCIEROS, activa: false, cerrada: false, votos: {} },
+  excedentes: { id: "excedentes", titulo: "Distribución de Excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025", tipo: "reforma", opciones: OPCIONES_EXCEDENTES, activa: false, cerrada: false, votos: {} },
   juntaDirectiva: { id: "juntaDirectiva", titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
   comiteControl: { id: "comiteControl", titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
   reformasEstatutarias: { id: "reformasEstatutarias", titulo: "Reforma Estatutaria", descripcion: "Aprobación reforma parcial de estatutos FONSECURITAS", tipo: "reforma", opciones: REFORMAS_ESTATUTARIAS, activa: false, cerrada: false, votos: {} },
@@ -92,10 +126,12 @@ const MODULOS_INICIALES = {
 
 // ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
 async function initDB(modulos, delegados) {
-  // Init modulos
+  // Upsert modulos — inserts new ones, leaves existing ones untouched
   const { data: existingMods } = await supabase.from("modulos").select("id");
-  if (!existingMods || existingMods.length === 0) {
-    const rows = Object.values(modulos).map(m => ({
+  const existingIds = (existingMods || []).map(m => m.id);
+  const newMods = Object.values(modulos).filter(m => !existingIds.includes(m.id));
+  if (newMods.length > 0) {
+    const rows = newMods.map(m => ({
       id: m.id, titulo: m.titulo, descripcion: m.descripcion,
       tipo: m.tipo, opciones: m.opciones, activa: m.activa, cerrada: m.cerrada, votos: m.votos
     }));
