@@ -108,20 +108,20 @@ const OPCIONES_EXCEDENTES = [
 ];
 
 const MODULOS_INICIALES = {
-  ordenDia: { id: "ordenDia", titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_ORDEN_DIA, activa: false, cerrada: false, votos: {} },
-  mesaDirectiva: { id: "mesaDirectiva", titulo: "Elección Mesa Directiva", descripcion: "Elección del Presidente, Vicepresidente y Secretario de la Asamblea 2026", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  reglamento: { id: "reglamento", titulo: "Aprobación del Reglamento", descripcion: "Lectura y aprobación del Reglamento de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_REGLAMENTO, activa: false, cerrada: false, votos: {} },
-  comisiones: { id: "comisiones", titulo: "Elección de Comisiones", descripcion: "Elección de las tres comisiones de trabajo de la Asamblea 2026", tipo: "reforma", opciones: OPCIONES_COMISIONES, activa: false, cerrada: false, votos: {} },
-  estadosFinancieros: { id: "estadosFinancieros", titulo: "Aprobación Estados Financieros 2025", descripcion: "Aprobación de estados financieros con corte a 31 de diciembre de 2025", tipo: "reforma", opciones: OPCIONES_ESTADOS_FINANCIEROS, activa: false, cerrada: false, votos: {} },
-  excedentes: { id: "excedentes", titulo: "Distribución de Excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025", tipo: "reforma", opciones: OPCIONES_EXCEDENTES, activa: false, cerrada: false, votos: {} },
-  juntaDirectiva: { id: "juntaDirectiva", titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  comiteControl: { id: "comiteControl", titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  reformasEstatutarias: { id: "reformasEstatutarias", titulo: "Reforma Estatutaria", descripcion: "Aprobación reforma parcial de estatutos FONSECURITAS", tipo: "reforma", opciones: REFORMAS_ESTATUTARIAS, activa: false, cerrada: false, votos: {} },
-  revisorFiscal: { id: "revisorFiscal", titulo: "Elección Revisor Fiscal", descripcion: "Periodo 2026-2028 — Órgano de fiscalización externa y asignación de honorarios", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  bienestar: { id: "bienestar", titulo: "Actividad de Bienestar 2026", descripcion: "Selección de la actividad social del año", tipo: "opcion_multiple", opciones: VOTACIONES_BIENESTAR, activa: false, cerrada: false, votos: {} },
-  auxiliosSolidarios: { id: "auxiliosSolidarios", titulo: "Proposiciones — Auxilios Solidarios", descripcion: "Votación sobre propuestas de nuevos auxilios y modificación de beneficios", tipo: "reforma", opciones: AUXILIOS_SOLIDARIOS, activa: false, cerrada: false, votos: {} },
-  extra1: { id: "extra1", titulo: "Votación Extra 1", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
-  extra2: { id: "extra2", titulo: "Votación Extra 2", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
+  ordenDia: { id: "ordenDia", orden: 1, titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_ORDEN_DIA, activa: false, cerrada: false, votos: {} },
+  mesaDirectiva: { id: "mesaDirectiva", orden: 2, titulo: "Elección Mesa Directiva", descripcion: "Elección del Presidente, Vicepresidente y Secretario de la Asamblea 2026", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  reglamento: { id: "reglamento", orden: 3, titulo: "Aprobación del Reglamento", descripcion: "Lectura y aprobación del Reglamento de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_REGLAMENTO, activa: false, cerrada: false, votos: {} },
+  comisiones: { id: "comisiones", orden: 4, titulo: "Elección de Comisiones", descripcion: "Elección de las tres comisiones de trabajo de la Asamblea 2026", tipo: "reforma", opciones: OPCIONES_COMISIONES, activa: false, cerrada: false, votos: {} },
+  estadosFinancieros: { id: "estadosFinancieros", orden: 5, titulo: "Aprobación Estados Financieros 2025", descripcion: "Aprobación de estados financieros con corte a 31 de diciembre de 2025", tipo: "reforma", opciones: OPCIONES_ESTADOS_FINANCIEROS, activa: false, cerrada: false, votos: {} },
+  excedentes: { id: "excedentes", orden: 6, titulo: "Distribución de Excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025", tipo: "reforma", opciones: OPCIONES_EXCEDENTES, activa: false, cerrada: false, votos: {} },
+  juntaDirectiva: { id: "juntaDirectiva", orden: 8, titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  comiteControl: { id: "comiteControl", orden: 9, titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  reformasEstatutarias: { id: "reformasEstatutarias", orden: 7, titulo: "Reforma Estatutaria", descripcion: "Aprobación reforma parcial de estatutos FONSECURITAS", tipo: "reforma", opciones: REFORMAS_ESTATUTARIAS, activa: false, cerrada: false, votos: {} },
+  revisorFiscal: { id: "revisorFiscal", orden: 10, titulo: "Elección Revisor Fiscal", descripcion: "Periodo 2026-2028 — Órgano de fiscalización externa y asignación de honorarios", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  bienestar: { id: "bienestar", orden: 11, titulo: "Actividad de Bienestar 2026", descripcion: "Selección de la actividad social del año", tipo: "opcion_multiple", opciones: VOTACIONES_BIENESTAR, activa: false, cerrada: false, votos: {} },
+  auxiliosSolidarios: { id: "auxiliosSolidarios", orden: 12, titulo: "Proposiciones — Auxilios Solidarios", descripcion: "Votación sobre propuestas de nuevos auxilios y modificación de beneficios", tipo: "reforma", opciones: AUXILIOS_SOLIDARIOS, activa: false, cerrada: false, votos: {} },
+  extra1: { id: "extra1", orden: 13, titulo: "Votación Extra 1", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
+  extra2: { id: "extra2", orden: 14, titulo: "Votación Extra 2", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
 };
 
 // ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ async function initDB(modulos, delegados) {
 }
 
 async function fetchModulos() {
-  const { data } = await supabase.from("modulos").select("*");
+  const { data } = await supabase.from("modulos").select("*").order("orden", { ascending: true });
   if (!data) return null;
   const obj = {};
   data.forEach(m => { obj[m.id] = m; });
@@ -161,7 +161,8 @@ async function saveModulo(modulo) {
   await supabase.from("modulos").upsert({
     id: modulo.id, titulo: modulo.titulo, descripcion: modulo.descripcion,
     tipo: modulo.tipo, opciones: modulo.opciones,
-    activa: modulo.activa, cerrada: modulo.cerrada, votos: modulo.votos
+    activa: modulo.activa, cerrada: modulo.cerrada, votos: modulo.votos,
+    orden: modulo.orden || 99
   });
 }
 
@@ -265,7 +266,7 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
               </div>
             )}
             <div className="space-y-3">
-              {Object.values(modulos).map(m => {
+              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => {
                 const abierto = m.activa && !m.cerrada;
                 const yaVoto = yaVotoEnModulo(m.id);
                 return (
@@ -631,7 +632,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {Object.values(modulos).map(m => (
+              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => (
                 <div key={m.id} className="bg-white rounded-xl border p-4 shadow-sm">
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -651,7 +652,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
           <div>
             <h2 className="text-blue-950 font-bold text-xl mb-4">Gestión de módulos</h2>
             <div className="space-y-4">
-              {Object.values(modulos).map(m => {
+              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => {
                 const isEdit = editando === m.id;
                 return (
                   <div key={m.id} className="bg-white rounded-2xl border shadow-sm overflow-hidden">
@@ -908,7 +909,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               <button onClick={exportar} className="px-4 py-2 bg-blue-900 text-white text-sm rounded-xl font-semibold hover:bg-blue-800">📥 Exportar</button>
             </div>
             <div className="space-y-5">
-              {Object.values(modulos).map(m => {
+              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => {
                 const totalVotos = Object.keys(m.votos || {}).length;
                 const r = getResultados(m);
                 return (
