@@ -484,6 +484,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
   const [nuevaOpcion, setNuevaOpcion] = useState({ titulo: "", descripcion: "" });
   const [editTitulo, setEditTitulo] = useState("");
   const [editDesc, setEditDesc] = useState("");
+  const [editTipo, setEditTipo] = useState("");
   const [saving, setSaving] = useState(false);
   const [quorumAsistentes, setQuorumAsistentes] = useState([]);
   const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
@@ -669,7 +670,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                         ) : (
                           <button onClick={() => updateModulo(m.id, { activa: true, cerrada: false })} className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700">Abrir votación</button>
                         )}
-                        <button onClick={() => { setEditando(isEdit ? null : m.id); setEditTitulo(m.titulo); setEditDesc(m.descripcion); setNuevaPlancha({ nombre: "", miembros: "" }); setNuevaOpcion({ titulo: "", descripcion: "" }); }}
+                        <button onClick={() => { setEditando(isEdit ? null : m.id); setEditTitulo(m.titulo); setEditDesc(m.descripcion); setEditTipo(m.tipo); setNuevaPlancha({ nombre: "", miembros: "" }); setNuevaOpcion({ titulo: "", descripcion: "" }); }}
                           className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-800 hover:bg-blue-200">
                           {isEdit ? "Cerrar" : "✏️ Editar"}
                         </button>
@@ -679,8 +680,21 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                       <div className="p-5 bg-blue-50 border-b space-y-3">
                         <input value={editTitulo} onChange={e => setEditTitulo(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Título" />
                         <input value={editDesc} onChange={e => setEditDesc(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Descripción" />
-                        <button onClick={() => updateModulo(m.id, { titulo: editTitulo, descripcion: editDesc })}
-                          className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-600 block mb-1">Tipo de votación:</label>
+                          <select value={editTipo} onChange={e => setEditTipo(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
+                            <option value="plancha">🗳️ Plancha (votar por candidatos)</option>
+                            <option value="reforma">✅ SÍ / NO / BLANCO (aprobación)</option>
+                            <option value="opcion_multiple">🔘 Opción múltiple (elegir una)</option>
+                            <option value="libre">📝 Libre (opciones personalizadas)</option>
+                          </select>
+                          {editTipo !== m.tipo && <p className="text-yellow-600 text-xs mt-1">⚠️ Al cambiar el tipo se borrarán las opciones actuales</p>}
+                        </div>
+                        <button onClick={() => {
+                          const changes = { titulo: editTitulo, descripcion: editDesc, tipo: editTipo };
+                          if (editTipo !== m.tipo) changes.opciones = [];
+                          updateModulo(m.id, changes);
+                        }} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
 
                         {m.tipo === "plancha" && (
                           <div>
