@@ -589,7 +589,57 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               );
             })()}
             <div className="bg-white rounded-2xl border shadow-sm p-5">
-              <h3 className="font-bold text-gray-800 mb-3">📋 Registro manual de asistencia</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-gray-800">📋 Registro manual de asistencia</h3>
+                <button onClick={() => {
+                  const presentes = quorumLista.length;
+                  const minimo = quorumConfig.minimo;
+                  const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
+                  const fecha = new Date().toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" });
+                  const hora = new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+                  const lineas = [
+                    "FONSECURITAS — ASAMBLEA GENERAL 2026",
+                    "LISTADO DE ASISTENCIA",
+                    "=".repeat(60),
+                    `Fecha: ${fecha}   Hora de impresión: ${hora}`,
+                    `Total habilitados: ${totalDelegados}   Presentes: ${presentes}   Asistencia: ${pct}%`,
+                    `Quórum mínimo requerido: ${minimo}   Estado: ${presentes >= minimo ? "✓ QUÓRUM ALCANZADO" : "✗ SIN QUÓRUM"}`,
+                    "=".repeat(60),
+                    "",
+                    `${"N°".padEnd(4)} ${"NOMBRE".padEnd(40)} ${"CIUDAD".padEnd(15)} ${"TIPO".padEnd(10)} ${"MODALIDAD".padEnd(12)} HORA`,
+                    "-".repeat(100),
+                  ];
+                  let contador = 1;
+                  delegados.filter(d => d.activo !== false).forEach(d => {
+                    const reg = quorumLista.find(q => q.delegado_id === d.id);
+                    if (reg) {
+                      const horaReg = new Date(reg.hora).toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+                      lineas.push(`${String(contador).padEnd(4)} ${d.nombre.padEnd(40)} ${(d.ciudad||"").padEnd(15)} ${d.tipo.padEnd(10)} ${reg.tipo.toUpperCase().padEnd(12)} ${horaReg}`);
+                      contador++;
+                    }
+                  });
+                  lineas.push("-".repeat(100));
+                  lineas.push("");
+                  lineas.push("AUSENTES:");
+                  lineas.push("-".repeat(60));
+                  delegados.filter(d => d.activo !== false).forEach(d => {
+                    const reg = quorumLista.find(q => q.delegado_id === d.id);
+                    if (!reg) lineas.push(`  ${d.nombre} — ${d.ciudad||""} (${d.tipo})`);
+                  });
+                  lineas.push("");
+                  lineas.push("=".repeat(60));
+                  lineas.push(`Firma Presidente de la Asamblea: ______________________________`);
+                  lineas.push(`Firma Secretario de la Asamblea: ______________________________`);
+                  const blob = new Blob([lineas.join("
+")], { type: "text/plain;charset=utf-8" });
+                  const a = document.createElement("a");
+                  a.href = URL.createObjectURL(blob);
+                  a.download = `listado_asistencia_asamblea_2026.txt`;
+                  a.click();
+                }} className="px-4 py-2 bg-blue-900 text-white text-sm rounded-xl font-semibold hover:bg-blue-800">
+                  📥 Descargar listado
+                </button>
+              </div>
               <div className="overflow-auto max-h-96">
                 <table className="w-full text-sm">
                   <thead><tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
