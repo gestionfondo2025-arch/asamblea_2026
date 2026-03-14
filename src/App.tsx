@@ -54,15 +54,36 @@ const DELEGADOS_INICIALES = [
   { id: 40, cedula: "", nombre: "ALFEREZ ALVARO", ciudad: "BOGOTA", zona: "ADMINISTRATIVOS", tipo: "PRINCIPAL" },
 ];
 
-const REFORMAS_ESTATUTARIAS = [
-  { id: "ref_art12", titulo: "Reforma Art. 12", descripcion: "Determinación del vínculo de asociación y requisitos de ingreso – Incluye pensionados y nuevos requisitos SARLAFT/DIAN" },
-  { id: "ref_art15", titulo: "Reforma Art. 15", descripcion: "Pérdida del carácter de asociado – Nuevas causales por riesgo financiero, jurídico y tributario" },
-  { id: "ref_art17", titulo: "Reforma Art. 17", descripcion: "Reingreso posterior a renuncia voluntaria – Nuevos requisitos y controles de residencia fiscal" },
-  { id: "ref_art18", titulo: "Reforma Art. 18", descripcion: "Desvinculación de la entidad empleadora – Permanencia de pensionados conforme a Ley 496/1999" },
-  { id: "ref_art32", titulo: "Reforma Art. 32", descripcion: "Compromiso económico de los asociados – Cambio distribución aportes de 20/80 a 50/50" },
-  { id: "ref_art60", titulo: "Reforma Art. 60-62", descripcion: "Requisitos, idoneidad, evaluación y causales de remoción del Gerente – Profesionalización y rendición de cuentas" },
-  { id: "ref_art99", titulo: "Adición Art. 99 y 110", descripcion: "Gobierno corporativo, ética y conflictos de interés – Código de Buen Gobierno" },
-  { id: "ref_art124", titulo: "Adición Art. 124-125", descripcion: "Reconocimiento del régimen de insolvencia (Ley 2445/2025) y sus efectos" },
+const REFORMA_PENSIONADOS = [
+  { id: "ref_art12", titulo: "Art. 12 — Vínculo de asociación", descripcion: "Determinación del vínculo de asociación y requisitos de ingreso – Incluye pensionados y nuevos requisitos SARLAFT/DIAN" },
+  { id: "ref_art15", titulo: "Art. 15 — Pérdida del carácter de asociado", descripcion: "Nuevas causales por riesgo financiero, jurídico y tributario" },
+  { id: "ref_art17", titulo: "Art. 17 — Reingreso posterior a renuncia", descripcion: "Nuevos requisitos y controles de residencia fiscal" },
+  { id: "ref_art18", titulo: "Art. 18 — Desvinculación de entidad empleadora", descripcion: "Permanencia de pensionados conforme a Ley 496/1999" },
+];
+
+const REFORMA_APORTES = [
+  { id: "ref_art32", titulo: "Art. 32 — Distribución de aportes", descripcion: "Compromiso económico de los asociados – Cambio distribución aportes de 20/80 a 50/50" },
+];
+
+const REFORMA_REQUISITOS_JUNTA = [
+  { id: "ref_art55", titulo: "Art. 55 — Requisitos Junta Directiva", descripcion: "Requisitos e idoneidad para ser miembro de la Junta Directiva" },
+  { id: "ref_art68", titulo: "Art. 68 — Requisitos Comité de Control Social", descripcion: "Requisitos e idoneidad para ser miembro del Comité de Control Social" },
+];
+
+const REFORMA_GERENTE = [
+  { id: "ref_art60", titulo: "Art. 60 — Requisitos del Gerente", descripcion: "Requisitos e idoneidad para el cargo de Gerente" },
+  { id: "ref_art61", titulo: "Art. 61 — Evaluación del Gerente", descripcion: "Evaluación de desempeño y rendición de cuentas del Gerente" },
+  { id: "ref_art63", titulo: "Art. 63 — Causales de remoción del Gerente", descripcion: "Causales de remoción del Gerente – Profesionalización y rendición de cuentas" },
+];
+
+const REFORMA_GOBIERNO = [
+  { id: "ref_art99", titulo: "Art. 99 — Gobierno corporativo y ética", descripcion: "Gobierno corporativo, ética y conflictos de interés" },
+  { id: "ref_art110", titulo: "Art. 110 — Código de Buen Gobierno", descripcion: "Código de Buen Gobierno – Conflictos de interés y transparencia" },
+];
+
+const REFORMA_INSOLVENCIA = [
+  { id: "ref_art124", titulo: "Art. 124 — Régimen de insolvencia", descripcion: "Reconocimiento del régimen de insolvencia (Ley 2445/2025) y sus efectos" },
+  { id: "ref_art125", titulo: "Art. 125 — Efectos de la insolvencia", descripcion: "Efectos del régimen de insolvencia sobre los asociados y el fondo" },
 ];
 
 const VOTACIONES_BIENESTAR = [
@@ -114,14 +135,19 @@ const MODULOS_INICIALES = {
   comisiones: { id: "comisiones", orden: 4, titulo: "Elección de Comisiones", descripcion: "Elección de las tres comisiones de trabajo de la Asamblea 2026", tipo: "reforma", opciones: OPCIONES_COMISIONES, activa: false, cerrada: false, votos: {} },
   estadosFinancieros: { id: "estadosFinancieros", orden: 5, titulo: "Aprobación Estados Financieros 2025", descripcion: "Aprobación de estados financieros con corte a 31 de diciembre de 2025", tipo: "reforma", opciones: OPCIONES_ESTADOS_FINANCIEROS, activa: false, cerrada: false, votos: {} },
   excedentes: { id: "excedentes", orden: 6, titulo: "Distribución de Excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025", tipo: "reforma", opciones: OPCIONES_EXCEDENTES, activa: false, cerrada: false, votos: {} },
-  juntaDirectiva: { id: "juntaDirectiva", orden: 8, titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  comiteControl: { id: "comiteControl", orden: 9, titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  reformasEstatutarias: { id: "reformasEstatutarias", orden: 7, titulo: "Reforma Estatutaria", descripcion: "Aprobación reforma parcial de estatutos FONSECURITAS", tipo: "reforma", opciones: REFORMAS_ESTATUTARIAS, activa: false, cerrada: false, votos: {} },
-  revisorFiscal: { id: "revisorFiscal", orden: 10, titulo: "Elección Revisor Fiscal", descripcion: "Periodo 2026-2028 — Órgano de fiscalización externa y asignación de honorarios", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  bienestar: { id: "bienestar", orden: 11, titulo: "Actividad de Bienestar 2026", descripcion: "Selección de la actividad social del año", tipo: "opcion_multiple", opciones: VOTACIONES_BIENESTAR, activa: false, cerrada: false, votos: {} },
-  auxiliosSolidarios: { id: "auxiliosSolidarios", orden: 12, titulo: "Proposiciones — Auxilios Solidarios", descripcion: "Votación sobre propuestas de nuevos auxilios y modificación de beneficios", tipo: "reforma", opciones: AUXILIOS_SOLIDARIOS, activa: false, cerrada: false, votos: {} },
-  extra1: { id: "extra1", orden: 13, titulo: "Votación Extra 1", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
-  extra2: { id: "extra2", orden: 14, titulo: "Votación Extra 2", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
+  juntaDirectiva: { id: "juntaDirectiva", orden: 13, titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  comiteControl: { id: "comiteControl", orden: 14, titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  refPensionados: { id: "refPensionados", orden: 7, titulo: "Reforma Estatutaria — Pensionados", descripcion: "Arts. 12, 15, 17 y 18 — Vínculo de asociación, pérdida de calidad, reingreso y desvinculación", tipo: "reforma", opciones: REFORMA_PENSIONADOS, activa: false, cerrada: false, votos: {} },
+  refAportes: { id: "refAportes", orden: 8, titulo: "Reforma Estatutaria — Distribución de Aportes", descripcion: "Art. 32 — Cambio en la distribución de aportes de 20/80 a 50/50", tipo: "reforma", opciones: REFORMA_APORTES, activa: false, cerrada: false, votos: {} },
+  refRequisitosJunta: { id: "refRequisitosJunta", orden: 9, titulo: "Reforma Estatutaria — Requisitos Junta y Comité", descripcion: "Arts. 55 y 68 — Requisitos para ser miembro de Junta Directiva y Comité de Control Social", tipo: "reforma", opciones: REFORMA_REQUISITOS_JUNTA, activa: false, cerrada: false, votos: {} },
+  refGerente: { id: "refGerente", orden: 10, titulo: "Reforma Estatutaria — Cargo de Gerente", descripcion: "Arts. 60, 61 y 63 — Condiciones, evaluación y causales de remoción del Gerente", tipo: "reforma", opciones: REFORMA_GERENTE, activa: false, cerrada: false, votos: {} },
+  refGobierno: { id: "refGobierno", orden: 11, titulo: "Reforma Estatutaria — Gobierno Corporativo", descripcion: "Arts. 99 y 110 — Gobierno corporativo, ética y conflictos de interés", tipo: "reforma", opciones: REFORMA_GOBIERNO, activa: false, cerrada: false, votos: {} },
+  refInsolvencia: { id: "refInsolvencia", orden: 12, titulo: "Reforma Estatutaria — Insolvencia", descripcion: "Arts. 124 y 125 — Régimen de insolvencia (Ley 2445/2025) y sus efectos", tipo: "reforma", opciones: REFORMA_INSOLVENCIA, activa: false, cerrada: false, votos: {} },
+  revisorFiscal: { id: "revisorFiscal", orden: 15, titulo: "Elección Revisor Fiscal", descripcion: "Periodo 2026-2028 — Órgano de fiscalización externa y asignación de honorarios", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  bienestar: { id: "bienestar", orden: 16, titulo: "Actividad de Bienestar 2026", descripcion: "Selección de la actividad social del año", tipo: "opcion_multiple", opciones: VOTACIONES_BIENESTAR, activa: false, cerrada: false, votos: {} },
+  auxiliosSolidarios: { id: "auxiliosSolidarios", orden: 17, titulo: "Proposiciones — Auxilios Solidarios", descripcion: "Votación sobre propuestas de nuevos auxilios y modificación de beneficios", tipo: "reforma", opciones: AUXILIOS_SOLIDARIOS, activa: false, cerrada: false, votos: {} },
+  extra1: { id: "extra1", orden: 18, titulo: "Votación Extra 1", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
+  extra2: { id: "extra2", orden: 19, titulo: "Votación Extra 2", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
 };
 
 // ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
