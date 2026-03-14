@@ -601,7 +601,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                     "FONSECURITAS — ASAMBLEA GENERAL 2026",
                     "LISTADO DE ASISTENCIA",
                     "=".repeat(60),
-                    `Fecha: ${fecha}   Hora de impresión: ${hora}`,
+                    `Fecha: ${fecha}   Hora: ${hora}`,
                     `Total habilitados: ${totalDelegados}   Presentes: ${presentes}   Asistencia: ${pct}%`,
                     `Quórum mínimo requerido: ${minimo}   Estado: ${presentes >= minimo ? "✓ QUÓRUM ALCANZADO" : "✗ SIN QUÓRUM"}`,
                     "=".repeat(60),
@@ -630,8 +630,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                   lineas.push("=".repeat(60));
                   lineas.push(`Firma Presidente de la Asamblea: ______________________________`);
                   lineas.push(`Firma Secretario de la Asamblea: ______________________________`);
-                  const blob = new Blob([lineas.join("
-")], { type: "text/plain;charset=utf-8" });
+                  const blob = new Blob([lineas.join("\n")], { type: "text/plain;charset=utf-8" });
                   const a = document.createElement("a");
                   a.href = URL.createObjectURL(blob);
                   a.download = `listado_asistencia_asamblea_2026.txt`;
