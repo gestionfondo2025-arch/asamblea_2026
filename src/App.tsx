@@ -2,15 +2,11 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
 const SUPABASE_URL = "https://vuefojhztkzhdspwtjjq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_PoT-Y_jSM8E9Itbzc0OiUw_scTqTO1Q";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ─── LOGO BASE64 ─────────────────────────────────────────────────────────────
 const LOGO_URL = "/logo.jpeg";
 
-// ─── DATOS INICIALES ──────────────────────────────────────────────────────────
 const DELEGADOS_INICIALES = [
   { id: 1, cedula: "", ciudad: "BOGOTA", nombre: "SANCHEZ PEREZ DEISY MARCELA", tipo: "PRINCIPAL" },
   { id: 2, cedula: "", ciudad: "BOGOTA", nombre: "PINZON CASTILLO RICHARD JHEYN", tipo: "PRINCIPAL" },
@@ -60,73 +56,46 @@ const REFORMA_PENSIONADOS = [
   { id: "ref_art17", titulo: "Art. 17 — Reingreso posterior a renuncia", descripcion: "Nuevos requisitos y controles de residencia fiscal" },
   { id: "ref_art18", titulo: "Art. 18 — Desvinculación de entidad empleadora", descripcion: "Permanencia de pensionados conforme a Ley 496/1999" },
 ];
-
 const REFORMA_APORTES = [
   { id: "ref_art32", titulo: "Art. 32 — Distribución de aportes", descripcion: "Compromiso económico de los asociados – Cambio distribución aportes de 20/80 a 50/50" },
 ];
-
 const REFORMA_REQUISITOS_JUNTA = [
   { id: "ref_art55", titulo: "Art. 55 — Requisitos Junta Directiva", descripcion: "Requisitos e idoneidad para ser miembro de la Junta Directiva" },
   { id: "ref_art68", titulo: "Art. 68 — Requisitos Comité de Control Social", descripcion: "Requisitos e idoneidad para ser miembro del Comité de Control Social" },
 ];
-
 const REFORMA_GERENTE = [
   { id: "ref_art60", titulo: "Art. 60 — Requisitos del Gerente", descripcion: "Requisitos e idoneidad para el cargo de Gerente" },
   { id: "ref_art61", titulo: "Art. 61 — Evaluación del Gerente", descripcion: "Evaluación de desempeño y rendición de cuentas del Gerente" },
   { id: "ref_art63", titulo: "Art. 63 — Causales de remoción del Gerente", descripcion: "Causales de remoción del Gerente – Profesionalización y rendición de cuentas" },
 ];
-
 const REFORMA_GOBIERNO = [
   { id: "ref_art99", titulo: "Art. 99 — Gobierno corporativo y ética", descripcion: "Gobierno corporativo, ética y conflictos de interés" },
   { id: "ref_art110", titulo: "Art. 110 — Código de Buen Gobierno", descripcion: "Código de Buen Gobierno – Conflictos de interés y transparencia" },
 ];
-
 const REFORMA_INSOLVENCIA = [
   { id: "ref_art124", titulo: "Art. 124 — Régimen de insolvencia", descripcion: "Reconocimiento del régimen de insolvencia (Ley 2445/2025) y sus efectos" },
   { id: "ref_art125", titulo: "Art. 125 — Efectos de la insolvencia", descripcion: "Efectos del régimen de insolvencia sobre los asociados y el fondo" },
 ];
-
 const VOTACIONES_BIENESTAR = [
   { id: "bienA", texto: "Viaje / Paseo grupal de integración" },
   { id: "bienB", texto: "Evento cultural / recreativo en sede" },
   { id: "bienC", texto: "Actividad deportiva (olimpiadas internas)" },
 ];
-
 const AUXILIOS_SOLIDARIOS = [
   { id: "aux1", titulo: "Auxilio de calamidad por salud", descripcion: "Implementar un nuevo auxilio solidario para calamidades de salud de los asociados" },
   { id: "aux2", titulo: "Auxilio por nacimiento de hijo", descripcion: "Implementar un nuevo auxilio solidario por nacimiento de hijo de los asociados" },
-  { id: "aux3", titulo: "Eliminación de regalo para jóvenes 12-17 años", descripcion: "Que no se entregue el regalo navideño a hijos de asociados entre 12 y 17 años, por considerarse jóvenes y no niños" },
+  { id: "aux3", titulo: "Eliminación de regalo para jóvenes 12-17 años", descripcion: "Que no se entregue el regalo navideño a hijos de asociados entre 12 y 17 años" },
 ];
-
 const ADMIN_PASSWORD = "Fonse2025";
-
-const OPCIONES_ORDEN_DIA = [
-  { id: "od1", titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día presentado por la mesa directiva" },
-];
-
-const OPCIONES_MESA_DIRECTIVA = [
-  { id: "md1", titulo: "Presidente de la Asamblea", descripcion: "Elección del Presidente que dirigirá la Asamblea General 2026" },
-  { id: "md2", titulo: "Vicepresidente de la Asamblea", descripcion: "Elección del Vicepresidente de la Asamblea General 2026" },
-  { id: "md3", titulo: "Secretario de la Asamblea", descripcion: "Elección del Secretario encargado del acta de la Asamblea General 2026" },
-];
-
-const OPCIONES_REGLAMENTO = [
-  { id: "rg1", titulo: "Aprobación del Reglamento de la Asamblea", descripcion: "Lectura y aprobación del reglamento que regirá el desarrollo de la Asamblea General 2026" },
-];
-
+const OPCIONES_ORDEN_DIA = [{ id: "od1", titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día presentado por la mesa directiva" }];
+const OPCIONES_REGLAMENTO = [{ id: "rg1", titulo: "Aprobación del Reglamento de la Asamblea", descripcion: "Lectura y aprobación del reglamento que regirá el desarrollo de la Asamblea General 2026" }];
 const OPCIONES_COMISIONES = [
   { id: "com1", titulo: "Comisión de Revisión y Aprobación del Acta (3 miembros)", descripcion: "Comisión encargada de revisar y aprobar el acta de la asamblea" },
   { id: "com2", titulo: "Comisión de Clasificación y Enumeración de Proposiciones (2 miembros)", descripcion: "Comisión encargada de clasificar y enumerar las proposiciones presentadas" },
   { id: "com3", titulo: "Comisión de Escrutinios (2 miembros)", descripcion: "Comisión encargada de verificar y validar los resultados de las votaciones" },
 ];
-
-const OPCIONES_ESTADOS_FINANCIEROS = [
-  { id: "ef1", titulo: "Aprobación de Estados Financieros 2025", descripcion: "Aprobación de los estados financieros con corte a 31 de diciembre de 2025" },
-];
-
-const OPCIONES_EXCEDENTES = [
-  { id: "ex1", titulo: "Aprobación del proyecto de distribución de excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025" },
-];
+const OPCIONES_ESTADOS_FINANCIEROS = [{ id: "ef1", titulo: "Aprobación de Estados Financieros 2025", descripcion: "Aprobación de los estados financieros con corte a 31 de diciembre de 2025" }];
+const OPCIONES_EXCEDENTES = [{ id: "ex1", titulo: "Aprobación del proyecto de distribución de excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025" }];
 
 const MODULOS_INICIALES = {
   ordenDia: { id: "ordenDia", orden: 1, titulo: "Aprobación del Orden del Día", descripcion: "Aprobación del orden del día de la Asamblea General 2026", tipo: "reforma", opciones: OPCIONES_ORDEN_DIA, activa: false, cerrada: false, votos: {} },
@@ -135,14 +104,14 @@ const MODULOS_INICIALES = {
   comisiones: { id: "comisiones", orden: 4, titulo: "Elección de Comisiones", descripcion: "Elección de las tres comisiones de trabajo de la Asamblea 2026", tipo: "reforma", opciones: OPCIONES_COMISIONES, activa: false, cerrada: false, votos: {} },
   estadosFinancieros: { id: "estadosFinancieros", orden: 5, titulo: "Aprobación Estados Financieros 2025", descripcion: "Aprobación de estados financieros con corte a 31 de diciembre de 2025", tipo: "reforma", opciones: OPCIONES_ESTADOS_FINANCIEROS, activa: false, cerrada: false, votos: {} },
   excedentes: { id: "excedentes", orden: 6, titulo: "Distribución de Excedentes 2025", descripcion: "Aprobación del proyecto de distribución de excedentes del ejercicio 2025", tipo: "reforma", opciones: OPCIONES_EXCEDENTES, activa: false, cerrada: false, votos: {} },
-  juntaDirectiva: { id: "juntaDirectiva", orden: 13, titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
-  comiteControl: { id: "comiteControl", orden: 14, titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
   refPensionados: { id: "refPensionados", orden: 7, titulo: "Reforma Estatutaria — Pensionados", descripcion: "Arts. 12, 15, 17 y 18 — Vínculo de asociación, pérdida de calidad, reingreso y desvinculación", tipo: "reforma", opciones: REFORMA_PENSIONADOS, activa: false, cerrada: false, votos: {} },
   refAportes: { id: "refAportes", orden: 8, titulo: "Reforma Estatutaria — Distribución de Aportes", descripcion: "Art. 32 — Cambio en la distribución de aportes de 20/80 a 50/50", tipo: "reforma", opciones: REFORMA_APORTES, activa: false, cerrada: false, votos: {} },
   refRequisitosJunta: { id: "refRequisitosJunta", orden: 9, titulo: "Reforma Estatutaria — Requisitos Junta y Comité", descripcion: "Arts. 55 y 68 — Requisitos para ser miembro de Junta Directiva y Comité de Control Social", tipo: "reforma", opciones: REFORMA_REQUISITOS_JUNTA, activa: false, cerrada: false, votos: {} },
   refGerente: { id: "refGerente", orden: 10, titulo: "Reforma Estatutaria — Cargo de Gerente", descripcion: "Arts. 60, 61 y 63 — Condiciones, evaluación y causales de remoción del Gerente", tipo: "reforma", opciones: REFORMA_GERENTE, activa: false, cerrada: false, votos: {} },
   refGobierno: { id: "refGobierno", orden: 11, titulo: "Reforma Estatutaria — Gobierno Corporativo", descripcion: "Arts. 99 y 110 — Gobierno corporativo, ética y conflictos de interés", tipo: "reforma", opciones: REFORMA_GOBIERNO, activa: false, cerrada: false, votos: {} },
   refInsolvencia: { id: "refInsolvencia", orden: 12, titulo: "Reforma Estatutaria — Insolvencia", descripcion: "Arts. 124 y 125 — Régimen de insolvencia (Ley 2445/2025) y sus efectos", tipo: "reforma", opciones: REFORMA_INSOLVENCIA, activa: false, cerrada: false, votos: {} },
+  juntaDirectiva: { id: "juntaDirectiva", orden: 13, titulo: "Elección Junta Directiva", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
+  comiteControl: { id: "comiteControl", orden: 14, titulo: "Elección Comité de Control Social", descripcion: "Periodo 2026-2028 — Voto por plancha completa (3 principales + 3 suplentes)", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
   revisorFiscal: { id: "revisorFiscal", orden: 15, titulo: "Elección Revisor Fiscal", descripcion: "Periodo 2026-2028 — Órgano de fiscalización externa y asignación de honorarios", tipo: "plancha", opciones: [], activa: false, cerrada: false, votos: {} },
   bienestar: { id: "bienestar", orden: 16, titulo: "Actividad de Bienestar 2026", descripcion: "Selección de la actividad social del año", tipo: "opcion_multiple", opciones: VOTACIONES_BIENESTAR, activa: false, cerrada: false, votos: {} },
   auxiliosSolidarios: { id: "auxiliosSolidarios", orden: 17, titulo: "Proposiciones — Auxilios Solidarios", descripcion: "Votación sobre propuestas de nuevos auxilios y modificación de beneficios", tipo: "reforma", opciones: AUXILIOS_SOLIDARIOS, activa: false, cerrada: false, votos: {} },
@@ -150,26 +119,18 @@ const MODULOS_INICIALES = {
   extra2: { id: "extra2", orden: 19, titulo: "Votación Extra 2", descripcion: "Propuesta surgida en asamblea — pendiente de definir", tipo: "libre", opciones: [], activa: false, cerrada: false, votos: {} },
 };
 
-// ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
 async function initDB(modulos, delegados) {
-  // Upsert modulos — inserts new ones, leaves existing ones untouched
   const { data: existingMods } = await supabase.from("modulos").select("id");
   const existingIds = (existingMods || []).map(m => m.id);
   const newMods = Object.values(modulos).filter(m => !existingIds.includes(m.id));
   if (newMods.length > 0) {
-    const rows = newMods.map(m => ({
-      id: m.id, titulo: m.titulo, descripcion: m.descripcion,
-      tipo: m.tipo, opciones: m.opciones, activa: m.activa, cerrada: m.cerrada, votos: m.votos
-    }));
-    await supabase.from("modulos").insert(rows);
+    await supabase.from("modulos").insert(newMods.map(m => ({ id: m.id, titulo: m.titulo, descripcion: m.descripcion, tipo: m.tipo, opciones: m.opciones, activa: m.activa, cerrada: m.cerrada, votos: m.votos, orden: m.orden || 99 })));
   }
-  // Init delegados
   const { data: existingDels } = await supabase.from("delegados").select("id");
   if (!existingDels || existingDels.length === 0) {
     await supabase.from("delegados").insert(delegados.map(d => ({ ...d, activo: true })));
   }
 }
-
 async function fetchModulos() {
   const { data } = await supabase.from("modulos").select("*").order("orden", { ascending: true });
   if (!data) return null;
@@ -177,105 +138,69 @@ async function fetchModulos() {
   data.forEach(m => { obj[m.id] = m; });
   return obj;
 }
-
 async function fetchDelegados() {
   const { data } = await supabase.from("delegados").select("*").order("id");
   return data || [];
 }
-
 async function saveModulo(modulo) {
-  await supabase.from("modulos").upsert({
-    id: modulo.id, titulo: modulo.titulo, descripcion: modulo.descripcion,
-    tipo: modulo.tipo, opciones: modulo.opciones,
-    activa: modulo.activa, cerrada: modulo.cerrada, votos: modulo.votos,
-    orden: modulo.orden || 99
-  });
+  await supabase.from("modulos").upsert({ id: modulo.id, titulo: modulo.titulo, descripcion: modulo.descripcion, tipo: modulo.tipo, opciones: modulo.opciones, activa: modulo.activa, cerrada: modulo.cerrada, votos: modulo.votos, orden: modulo.orden || 99 });
 }
-
 async function saveDelegado(delegado) {
   await supabase.from("delegados").upsert(delegado);
 }
-
 async function fetchQuorum() {
-  try {
-    const { data } = await supabase.from("quorum").select("*");
-    return data || [];
-  } catch { return []; }
+  try { const { data } = await supabase.from("quorum").select("*"); return data || []; } catch { return []; }
 }
-
 async function fetchQuorumConfig() {
-  try {
-    const { data } = await supabase.from("quorum_config").select("*").eq("id", 1).single();
-    return data || { id: 1, minimo: 21, abierto: false };
-  } catch { return { id: 1, minimo: 21, abierto: false }; }
+  try { const { data } = await supabase.from("quorum_config").select("*").eq("id", 1).single(); return data || { id: 1, minimo: 21, abierto: false }; } catch { return { id: 1, minimo: 21, abierto: false }; }
 }
-
 async function saveQuorumConfig(config) {
   try { await supabase.from("quorum_config").upsert(config); } catch {}
 }
-
 async function registrarAsistencia(delegadoId, tipo) {
   await supabase.from("quorum").upsert({ delegado_id: delegadoId, tipo, hora: new Date().toISOString() });
 }
-
 async function limpiarQuorum() {
   try { await supabase.from("quorum").delete().neq("delegado_id", 0); } catch {}
 }
 
 const Badge = ({ children, color = "gray" }) => {
-  const colors = {
-    green: "bg-green-100 text-green-800 border-green-300",
-    red: "bg-red-100 text-red-800 border-red-300",
-    blue: "bg-blue-100 text-blue-800 border-blue-300",
-    gray: "bg-gray-100 text-gray-700 border-gray-300",
-    yellow: "bg-yellow-100 text-yellow-800 border-yellow-300",
-  };
+  const colors = { green: "bg-green-100 text-green-800 border-green-300", red: "bg-red-100 text-red-800 border-red-300", blue: "bg-blue-100 text-blue-800 border-blue-300", gray: "bg-gray-100 text-gray-700 border-gray-300", yellow: "bg-yellow-100 text-yellow-800 border-yellow-300" };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${colors[color]}`}>{children}</span>;
 };
-
 const ProgressBar = ({ value, total, color = "red" }) => {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   const colors = { red: "bg-red-600", blue: "bg-blue-800", green: "bg-green-600", gray: "bg-gray-400" };
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 bg-gray-200 rounded-full h-3">
-        <div className={`${colors[color]} h-3 rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
-      </div>
+      <div className="flex-1 bg-gray-200 rounded-full h-3"><div className={`${colors[color]} h-3 rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} /></div>
       <span className="text-xs font-bold text-gray-700 w-16 text-right">{value} ({pct}%)</span>
     </div>
   );
 };
 
-// ─── PANTALLA VOTACIÓN DELEGADO ───────────────────────────────────────────────
 function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
   const [moduloActivo, setModuloActivo] = useState(null);
   const [seleccion, setSeleccion] = useState({});
   const [votado, setVotado] = useState(false);
   const [confirmar, setConfirmar] = useState(false);
-
-  const modulosAbiertos = Object.values(modulos).filter(m => m.activa && !m.cerrada);
   const yaVotoEnModulo = (mId) => modulos[mId]?.votos?.[delegado.id] !== undefined;
-
   const handleVotar = () => { if (Object.keys(seleccion).length > 0) setConfirmar(true); };
   const confirmarVoto = async () => {
     await onVotar(moduloActivo.id, delegado.id, seleccion);
     setVotado(true); setConfirmar(false); setModuloActivo(null); setSeleccion({});
     setTimeout(() => setVotado(false), 3000);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col">
       <div className="bg-white/10 backdrop-blur border-b border-white/20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={LOGO_URL} alt="Fonsecuritas" className="h-10 object-contain bg-white rounded px-2" />
-          <div>
-            <div className="text-white font-bold text-lg">ASAMBLEA GENERAL 2026</div>
-            <div className="text-blue-200 text-sm">Panel de Votación</div>
-          </div>
+          <div><div className="text-white font-bold text-lg">ASAMBLEA GENERAL 2026</div><div className="text-blue-200 text-sm">Panel de Votación</div></div>
         </div>
         <div className="text-right">
           <div className="text-white font-semibold text-sm">{delegado.nombre}</div>
-          <div className="text-blue-200 text-xs">{delegado.zona} · {delegado.tipo}</div>
+          <div className="text-blue-200 text-xs">{delegado.ciudad} · {delegado.tipo}</div>
           <button onClick={onExit} className="text-xs text-red-300 hover:text-red-100 mt-1 underline">Cerrar sesión</button>
         </div>
       </div>
@@ -284,7 +209,7 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
         {!moduloActivo && !confirmar && (
           <div>
             <h2 className="text-white text-xl font-bold mb-4">📋 Votaciones disponibles</h2>
-            {modulosAbiertos.length === 0 && (
+            {Object.values(modulos).filter(m => m.activa && !m.cerrada).length === 0 && (
               <div className="bg-white/10 rounded-xl p-8 text-center text-blue-200">
                 <div className="text-4xl mb-2">⏳</div>
                 <div className="font-semibold">No hay votaciones abiertas en este momento</div>
@@ -299,10 +224,7 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
                   <div key={m.id} className={`rounded-xl p-4 border transition-all ${abierto && !yaVoto ? "bg-white/15 border-blue-400 cursor-pointer hover:bg-white/25" : "bg-white/5 border-white/10"}`}
                     onClick={() => { if (abierto && !yaVoto) { setModuloActivo(m); setSeleccion({}); } }}>
                     <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-white font-semibold">{m.titulo}</div>
-                        <div className="text-blue-200 text-xs mt-0.5">{m.descripcion}</div>
-                      </div>
+                      <div><div className="text-white font-semibold">{m.titulo}</div><div className="text-blue-200 text-xs mt-0.5">{m.descripcion}</div></div>
                       <div className="ml-3 shrink-0">
                         {yaVoto ? <Badge color="green">✓ Votado</Badge> : m.cerrada ? <Badge color="gray">Cerrada</Badge> : abierto ? <Badge color="blue">Abierta</Badge> : <Badge color="gray">Pendiente</Badge>}
                       </div>
@@ -411,55 +333,42 @@ function PantallaVotacion({ modulos, delegado, onVotar, onExit }) {
   );
 }
 
-
-// ─── CONFIRMACIÓN ASISTENCIA DELEGADO ────────────────────────────────────────
 function ConfirmarAsistencia({ delegado, onConfirmar, onSaltar }) {
   const [tipo, setTipo] = useState(null);
   const [confirmado, setConfirmado] = useState(false);
-
   const handleConfirmar = async () => {
     if (!tipo) return;
     await registrarAsistencia(delegado.id, tipo);
     setConfirmado(true);
     setTimeout(() => onConfirmar(), 1500);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <img src={LOGO_URL} alt="Fonsecuritas" className="h-16 object-contain bg-white rounded-xl px-4 py-2 mx-auto mb-3" />
           <h2 className="text-white text-xl font-bold">Bienvenido, {delegado.nombre.split(" ")[0]}</h2>
-          <p className="text-blue-300 text-sm">{delegado.zona} · {delegado.tipo}</p>
+          <p className="text-blue-300 text-sm">{delegado.ciudad} · {delegado.tipo}</p>
         </div>
         {confirmado ? (
           <div className="bg-green-600 rounded-2xl p-8 text-center text-white">
             <div className="text-5xl mb-3">✅</div>
             <div className="text-xl font-bold">¡Asistencia registrada!</div>
-            <div className="text-sm opacity-80 mt-1">Redirigiendo al panel de votación...</div>
+            <div className="text-sm opacity-80 mt-1">Redirigiendo...</div>
           </div>
         ) : (
           <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6">
             <h3 className="text-white font-bold text-center mb-4">¿Cómo estás participando hoy?</h3>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <button onClick={() => setTipo("presencial")}
-                className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "presencial" ? "border-green-400 bg-green-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
-                <div className="text-3xl mb-1">🏢</div>
-                <div>Presencial</div>
+              <button onClick={() => setTipo("presencial")} className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "presencial" ? "border-green-400 bg-green-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
+                <div className="text-3xl mb-1">🏢</div><div>Presencial</div>
               </button>
-              <button onClick={() => setTipo("virtual")}
-                className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "virtual" ? "border-blue-400 bg-blue-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
-                <div className="text-3xl mb-1">💻</div>
-                <div>Virtual</div>
+              <button onClick={() => setTipo("virtual")} className={`py-4 rounded-xl border-2 font-bold transition-all ${tipo === "virtual" ? "border-blue-400 bg-blue-400/20 text-white" : "border-white/20 bg-white/5 text-white/60 hover:border-white/40"}`}>
+                <div className="text-3xl mb-1">💻</div><div>Virtual</div>
               </button>
             </div>
-            <button onClick={handleConfirmar} disabled={!tipo}
-              className="w-full py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-bold rounded-xl">
-              Confirmar asistencia →
-            </button>
-            <button onClick={onSaltar} className="w-full py-2 text-blue-300 text-xs mt-2 hover:text-white">
-              Saltar este paso (ya registrado)
-            </button>
+            <button onClick={handleConfirmar} disabled={!tipo} className="w-full py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-bold rounded-xl">Confirmar asistencia →</button>
+            <button onClick={onSaltar} className="w-full py-2 text-blue-300 text-xs mt-2 hover:text-white">Saltar este paso (ya registrado)</button>
           </div>
         )}
       </div>
@@ -467,7 +376,6 @@ function ConfirmarAsistencia({ delegado, onConfirmar, onSaltar }) {
   );
 }
 
-// ─── LOGIN DELEGADO ───────────────────────────────────────────────────────────
 function LoginDelegado({ delegados, onLogin, soloAsistencia = false, onVolver = null }) {
   const [cedulaInput, setCedulaInput] = useState("");
   const [error, setError] = useState("");
@@ -487,8 +395,7 @@ function LoginDelegado({ delegados, onLogin, soloAsistencia = false, onVolver = 
         <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6">
           <label className="text-blue-200 text-sm font-semibold block mb-2">Número de cédula</label>
           <input type="text" value={cedulaInput} onChange={e => { setCedulaInput(e.target.value); setError(""); }}
-            onKeyDown={e => e.key === "Enter" && handleLogin()}
-            placeholder="Ingresa tu número de cédula"
+            onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Ingresa tu número de cédula"
             className="w-full bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-blue-400 text-center text-lg font-mono tracking-widest" />
           {error && <p className="text-red-400 text-xs mt-2 text-center">{error}</p>}
           <button onClick={handleLogin} className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all">
@@ -502,7 +409,6 @@ function LoginDelegado({ delegados, onLogin, soloAsistencia = false, onVolver = 
   );
 }
 
-// ─── PANEL ADMIN ──────────────────────────────────────────────────────────────
 function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
   const [vista, setVista] = useState("dashboard");
   const [editando, setEditando] = useState(null);
@@ -512,33 +418,21 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
   const [editDesc, setEditDesc] = useState("");
   const [editTipo, setEditTipo] = useState("");
   const [saving, setSaving] = useState(false);
-  const [quorumAsistentes, setQuorumAsistentes] = useState([]);
-  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
-
-  useEffect(() => {
-    const loadQuorum = async () => {
-      const [q, qc] = await Promise.all([fetchQuorum(), fetchQuorumConfig()]);
-      setQuorumAsistentes(q);
-      setQuorumConfig(qc);
-    };
-    loadQuorum();
-    const interval = setInterval(loadQuorum, 3000);
-    return () => clearInterval(interval);
-  }, []);
   const [quorumLista, setQuorumLista] = useState([]);
+  const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [quorumMinInput, setQuorumMinInput] = useState("21");
 
-  const totalDelegados = delegados.filter(d => d.activo !== false).length;
-
   useEffect(() => {
-    fetchQuorumConfig().then(cfg => { setQuorumConfig(cfg); setQuorumMinInput(String(cfg.minimo)); });
     fetchQuorum().then(setQuorumLista);
+    fetchQuorumConfig().then(cfg => { setQuorumConfig(cfg); setQuorumMinInput(String(cfg.minimo)); });
     const iv = setInterval(() => {
       fetchQuorum().then(setQuorumLista);
       fetchQuorumConfig().then(cfg => { setQuorumConfig(cfg); setQuorumMinInput(String(cfg.minimo)); });
     }, 3000);
     return () => clearInterval(iv);
   }, []);
+
+  const totalDelegados = delegados.filter(d => d.activo !== false).length;
 
   const updateModulo = async (id, changes) => {
     setSaving(true);
@@ -547,36 +441,24 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
     await saveModulo(updated);
     setSaving(false);
   };
-
   const addPlancha = async (modId) => {
     if (!nuevaPlancha.nombre.trim()) return;
     const newOpciones = [...(modulos[modId].opciones || []), { id: "p_" + Date.now(), ...nuevaPlancha }];
     await updateModulo(modId, { opciones: newOpciones });
     setNuevaPlancha({ nombre: "", miembros: "" });
   };
-
-  const removePlancha = async (modId, opId) => {
-    const newOpciones = modulos[modId].opciones.filter(o => o.id !== opId);
-    await updateModulo(modId, { opciones: newOpciones });
-  };
-
+  const removePlancha = async (modId, opId) => { await updateModulo(modId, { opciones: modulos[modId].opciones.filter(o => o.id !== opId) }); };
   const addOpcion = async (modId) => {
     if (!nuevaOpcion.titulo.trim()) return;
     const newOpciones = [...(modulos[modId].opciones || []), { id: "op_" + Date.now(), ...nuevaOpcion }];
     await updateModulo(modId, { opciones: newOpciones });
     setNuevaOpcion({ titulo: "", descripcion: "" });
   };
-
-  const removeOpcion = async (modId, opId) => {
-    const newOpciones = modulos[modId].opciones.filter(o => o.id !== opId);
-    await updateModulo(modId, { opciones: newOpciones });
-  };
-
+  const removeOpcion = async (modId, opId) => { await updateModulo(modId, { opciones: modulos[modId].opciones.filter(o => o.id !== opId) }); };
   const updateDelegado = async (delegado) => {
     setDelegados(d => d.map(del => del.id === delegado.id ? delegado : del));
     await saveDelegado(delegado);
   };
-
   const getResultados = (m) => {
     if (!m.votos) return {};
     if (m.tipo === "plancha" || m.tipo === "opcion_multiple") {
@@ -591,34 +473,25 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
     });
     return conteo;
   };
-
   const exportar = () => {
     const lineas = ["RESULTADOS ASAMBLEA FONSECURITAS 2026", "=".repeat(50), ""];
-    Object.values(modulos).forEach(m => {
+    Object.values(modulos).sort((a,b)=>(a.orden||99)-(b.orden||99)).forEach(m => {
       const totalVotos = Object.keys(m.votos || {}).length;
       if (totalVotos === 0) return;
-      lineas.push(`MÓDULO: ${m.titulo}`);
-      lineas.push(`Total votos: ${totalVotos}`);
+      lineas.push(`MÓDULO: ${m.titulo}`); lineas.push(`Total votos: ${totalVotos}`);
       const r = getResultados(m);
       if (m.tipo === "plancha" || m.tipo === "opcion_multiple") {
-        Object.entries(r).forEach(([k, v]) => {
-          const op = m.opciones?.find(o => o.id === k);
-          lineas.push(`  ${op ? (op.nombre || op.texto) : k}: ${v}`);
-        });
+        Object.entries(r).forEach(([k, v]) => { const op = m.opciones?.find(o => o.id === k); lineas.push(`  ${op ? (op.nombre || op.texto) : k}: ${v}`); });
       } else {
-        m.opciones?.forEach(op => {
-          const res = r[op.id] || {};
-          lineas.push(`  ${op.titulo || op.texto}: SÍ=${res.SI||0}, NO=${res.NO||0}, BLANCO=${res.BLANCO||0}`);
-        });
+        m.opciones?.forEach(op => { const res = r[op.id] || {}; lineas.push(`  ${op.titulo || op.texto}: SÍ=${res.SI||0}, NO=${res.NO||0}, BLANCO=${res.BLANCO||0}`); });
       }
       lineas.push("");
     });
     const blob = new Blob([lineas.join("\n")], { type: "text/plain" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = "resultados_fonsecuritas_2026.txt"; a.click();
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "resultados_fonsecuritas_2026.txt"; a.click();
   };
-
   const nav = [{ id: "dashboard", label: "🏠 Dashboard" }, { id: "quorum", label: "✅ Quórum" }, { id: "modulos", label: "🗳️ Módulos" }, { id: "delegados", label: "👥 Delegados" }, { id: "resultados", label: "📊 Resultados" }];
+  const sortedModulos = Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99));
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -632,15 +505,16 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
         </div>
         <button onClick={onExit} className="text-xs bg-red-700 hover:bg-red-600 px-3 py-1.5 rounded-lg font-semibold">Cerrar sesión</button>
       </div>
-      <div className="bg-blue-900 px-4 flex gap-1">
+      <div className="bg-blue-900 px-4 flex gap-1 overflow-x-auto">
         {nav.map(n => (
           <button key={n.id} onClick={() => setVista(n.id)}
-            className={`px-4 py-2.5 text-sm font-semibold rounded-t-lg mt-1 transition-all ${vista === n.id ? "bg-gray-50 text-blue-900" : "text-blue-200 hover:bg-white/10 hover:text-white"}`}>
+            className={`px-4 py-2.5 text-sm font-semibold rounded-t-lg mt-1 transition-all whitespace-nowrap ${vista === n.id ? "bg-gray-50 text-blue-900" : "text-blue-200 hover:bg-white/10 hover:text-white"}`}>
             {n.label}
           </button>
         ))}
       </div>
       <div className="flex-1 p-6 overflow-auto">
+
         {vista === "dashboard" && (
           <div>
             <h2 className="text-blue-950 font-bold text-xl mb-4">Resumen en tiempo real</h2>
@@ -659,13 +533,10 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => (
+              {sortedModulos.map(m => (
                 <div key={m.id} className="bg-white rounded-xl border p-4 shadow-sm">
                   <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="font-bold text-gray-900 text-sm">{m.titulo}</div>
-                      <div className="text-gray-500 text-xs">{Object.keys(m.votos || {}).length} votos</div>
-                    </div>
+                    <div><div className="font-bold text-gray-900 text-sm">{m.orden}. {m.titulo}</div><div className="text-gray-500 text-xs">{Object.keys(m.votos || {}).length} votos</div></div>
                     {m.cerrada ? <Badge color="green">Cerrada</Badge> : m.activa ? <Badge color="blue">Activa</Badge> : <Badge color="gray">Inactiva</Badge>}
                   </div>
                   <ProgressBar value={Object.keys(m.votos || {}).length} total={totalDelegados} color={m.activa ? "red" : "gray"} />
@@ -675,17 +546,98 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
           </div>
         )}
 
+        {vista === "quorum" && (
+          <div>
+            <h2 className="text-blue-950 font-bold text-xl mb-4">Control de Quórum</h2>
+            <div className="bg-white rounded-2xl border shadow-sm p-5 mb-5">
+              <h3 className="font-bold text-gray-800 mb-3">⚙️ Configuración de quórum</h3>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div>
+                  <label className="text-sm text-gray-600 block mb-1">Mínimo de delegados requeridos</label>
+                  <input type="number" value={quorumMinInput} onChange={e => setQuorumMinInput(e.target.value)} className="border rounded-lg px-3 py-2 text-sm w-24 font-mono text-center" />
+                </div>
+                <button onClick={async () => { const cfg = { ...quorumConfig, minimo: parseInt(quorumMinInput) || 21 }; setQuorumConfig(cfg); await saveQuorumConfig(cfg); }} className="mt-5 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar mínimo</button>
+                <button onClick={async () => { const cfg = { ...quorumConfig, abierto: !quorumConfig.abierto }; setQuorumConfig(cfg); await saveQuorumConfig(cfg); }} className={`mt-5 px-4 py-2 text-sm rounded-lg font-semibold text-white ${quorumConfig.abierto ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
+                  {quorumConfig.abierto ? "🔒 Cerrar registro" : "🟢 Abrir registro de asistencia"}
+                </button>
+                <button onClick={async () => { if (confirm("¿Seguro? Esto borrará todos los registros de asistencia.")) { await limpiarQuorum(); setQuorumLista([]); } }} className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg font-semibold hover:bg-gray-300">🗑️ Limpiar registros</button>
+              </div>
+            </div>
+            {(() => {
+              const presentes = quorumLista.length;
+              const minimo = quorumConfig.minimo;
+              const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
+              const hayQuorum = presentes >= minimo;
+              return (
+                <div className={`rounded-2xl p-6 mb-5 text-white ${hayQuorum ? "bg-green-700" : "bg-red-700"}`}>
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <div className="text-5xl font-black">{presentes}</div>
+                      <div className="text-lg opacity-90">delegados presentes</div>
+                      <div className="text-sm opacity-75 mt-1">Mínimo requerido: {minimo} · Total habilitados: {totalDelegados}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-6xl">{hayQuorum ? "✅" : "⏳"}</div>
+                      <div className="text-xl font-bold mt-1">{hayQuorum ? "¡QUÓRUM ALCANZADO!" : "Sin quórum aún"}</div>
+                      <div className="text-sm opacity-75">{pct}% de asistencia · Faltan {Math.max(0, minimo - presentes)}</div>
+                    </div>
+                  </div>
+                  <div className="mt-4 bg-white/20 rounded-full h-4">
+                    <div className="bg-white h-4 rounded-full transition-all duration-700" style={{ width: `${Math.min(100, pct)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+            <div className="bg-white rounded-2xl border shadow-sm p-5">
+              <h3 className="font-bold text-gray-800 mb-3">📋 Registro manual de asistencia</h3>
+              <div className="overflow-auto max-h-96">
+                <table className="w-full text-sm">
+                  <thead><tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
+                    <th className="px-3 py-2 text-left">Nombre</th>
+                    <th className="px-3 py-2 text-left">Ciudad</th>
+                    <th className="px-3 py-2 text-left">Tipo</th>
+                    <th className="px-3 py-2 text-center">Presencial</th>
+                    <th className="px-3 py-2 text-center">Virtual</th>
+                    <th className="px-3 py-2 text-center">Estado</th>
+                  </tr></thead>
+                  <tbody>
+                    {delegados.filter(d => d.activo !== false).map(d => {
+                      const reg = quorumLista.find(q => q.delegado_id === d.id);
+                      return (
+                        <tr key={d.id} className={`border-b last:border-0 ${reg ? "bg-green-50" : ""}`}>
+                          <td className="px-3 py-2 font-medium text-xs">{d.nombre}</td>
+                          <td className="px-3 py-2 text-gray-500 text-xs">{d.ciudad}</td>
+                          <td className="px-3 py-2"><Badge color={d.tipo === "PRINCIPAL" ? "blue" : "yellow"}>{d.tipo}</Badge></td>
+                          <td className="px-3 py-2 text-center">
+                            <button onClick={async () => { await registrarAsistencia(d.id, "presencial"); fetchQuorum().then(setQuorumLista); }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "presencial" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-green-100"}`}>🏢 Presencial</button>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            <button onClick={async () => { await registrarAsistencia(d.id, "virtual"); fetchQuorum().then(setQuorumLista); }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "virtual" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-blue-100"}`}>💻 Virtual</button>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {reg ? <Badge color="green">✓ {reg.tipo}</Badge> : <Badge color="gray">Ausente</Badge>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
         {vista === "modulos" && (
           <div>
             <h2 className="text-blue-950 font-bold text-xl mb-4">Gestión de módulos</h2>
             <div className="space-y-4">
-              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => {
+              {sortedModulos.map(m => {
                 const isEdit = editando === m.id;
                 return (
                   <div key={m.id} className="bg-white rounded-2xl border shadow-sm overflow-hidden">
                     <div className="px-5 py-4 flex items-start justify-between bg-gray-50 border-b">
                       <div>
-                        <div className="font-bold text-gray-900">{m.titulo}</div>
+                        <div className="font-bold text-gray-900">{m.orden}. {m.titulo}</div>
                         <div className="text-gray-500 text-xs">{Object.keys(m.votos || {}).length} votos · {m.descripcion}</div>
                       </div>
                       <div className="flex gap-2 ml-3 flex-wrap items-center">
@@ -716,12 +668,8 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                           </select>
                           {editTipo !== m.tipo && <p className="text-yellow-600 text-xs mt-1">⚠️ Al cambiar el tipo se borrarán las opciones actuales</p>}
                         </div>
-                        <button onClick={() => {
-                          const changes = { titulo: editTitulo, descripcion: editDesc, tipo: editTipo };
-                          if (editTipo !== m.tipo) changes.opciones = [];
-                          updateModulo(m.id, changes);
-                        }} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
-
+                        <button onClick={() => { const changes = { titulo: editTitulo, descripcion: editDesc, tipo: editTipo }; if (editTipo !== m.tipo) changes.opciones = []; updateModulo(m.id, changes); }}
+                          className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
                         {m.tipo === "plancha" && (
                           <div>
                             <h4 className="font-semibold text-sm text-gray-700 mb-2">Planchas:</h4>
@@ -765,12 +713,7 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
                             ))}
                             <div className="bg-white rounded-lg p-3 border space-y-2 mt-2">
                               <input value={nuevaOpcion.titulo} onChange={e => setNuevaOpcion(n => ({ ...n, titulo: e.target.value }))} placeholder="Texto de la opción" className="w-full border rounded px-3 py-2 text-sm" />
-                              <button onClick={async () => {
-                                if (!nuevaOpcion.titulo.trim()) return;
-                                const newOpciones = [...(modulos[m.id].opciones || []), { id: "op_" + Date.now(), texto: nuevaOpcion.titulo }];
-                                await updateModulo(m.id, { opciones: newOpciones });
-                                setNuevaOpcion({ titulo: "", descripcion: "" });
-                              }} className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg font-semibold hover:bg-green-700">+ Agregar opción</button>
+                              <button onClick={async () => { if (!nuevaOpcion.titulo.trim()) return; const newOpciones = [...(modulos[m.id].opciones || []), { id: "op_" + Date.now(), texto: nuevaOpcion.titulo }]; await updateModulo(m.id, { opciones: newOpciones }); setNuevaOpcion({ titulo: "", descripcion: "" }); }} className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg font-semibold hover:bg-green-700">+ Agregar opción</button>
                             </div>
                           </div>
                         )}
@@ -786,159 +729,44 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
           </div>
         )}
 
-
-        {vista === "quorum" && (
-          <div>
-            <h2 className="text-blue-950 font-bold text-xl mb-4">Control de Quórum</h2>
-            
-            {/* Config */}
-            <div className="bg-white rounded-2xl border shadow-sm p-5 mb-5">
-              <h3 className="font-bold text-gray-800 mb-3">⚙️ Configuración de quórum</h3>
-              <div className="flex items-center gap-3 flex-wrap">
-                <div>
-                  <label className="text-sm text-gray-600 block mb-1">Mínimo de delegados requeridos</label>
-                  <input type="number" value={quorumMinInput} onChange={e => setQuorumMinInput(e.target.value)}
-                    className="border rounded-lg px-3 py-2 text-sm w-24 font-mono text-center" />
-                </div>
-                <button onClick={async () => {
-                  const cfg = { ...quorumConfig, minimo: parseInt(quorumMinInput) || 21 };
-                  setQuorumConfig(cfg);
-                  await saveQuorumConfig(cfg);
-                }} className="mt-5 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">
-                  Guardar mínimo
-                </button>
-                <button onClick={async () => {
-                  const cfg = { ...quorumConfig, abierto: !quorumConfig.abierto };
-                  setQuorumConfig(cfg);
-                  await saveQuorumConfig(cfg);
-                }} className={`mt-5 px-4 py-2 text-sm rounded-lg font-semibold text-white ${quorumConfig.abierto ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
-                  {quorumConfig.abierto ? "🔒 Cerrar registro" : "🟢 Abrir registro de asistencia"}
-                </button>
-                <button onClick={async () => {
-                  if (confirm("¿Seguro? Esto borrará todos los registros de asistencia.")) {
-                    await limpiarQuorum();
-                    setQuorumLista([]);
-                  }
-                }} className="mt-5 px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg font-semibold hover:bg-gray-300">
-                  🗑️ Limpiar registros
-                </button>
-              </div>
-            </div>
-
-            {/* Estado quórum */}
-            {(() => {
-              const presentes = quorumLista.length;
-              const minimo = quorumConfig.minimo;
-              const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
-              const hayQuorum = presentes >= minimo;
-              return (
-                <div className={`rounded-2xl p-6 mb-5 text-white ${hayQuorum ? "bg-green-700" : "bg-red-700"}`}>
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                      <div className="text-5xl font-black">{presentes}</div>
-                      <div className="text-lg opacity-90">delegados presentes</div>
-                      <div className="text-sm opacity-75 mt-1">Mínimo requerido: {minimo} · Total habilitados: {totalDelegados}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-6xl">{hayQuorum ? "✅" : "⏳"}</div>
-                      <div className="text-xl font-bold mt-1">{hayQuorum ? "¡QUÓRUM ALCANZADO!" : "Sin quórum aún"}</div>
-                      <div className="text-sm opacity-75">{pct}% de asistencia · Faltan {Math.max(0, minimo - presentes)}</div>
-                    </div>
-                  </div>
-                  <div className="mt-4 bg-white/20 rounded-full h-4">
-                    <div className="bg-white h-4 rounded-full transition-all duration-700" style={{ width: `${Math.min(100, pct)}%` }} />
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Registro manual por admin */}
-            <div className="bg-white rounded-2xl border shadow-sm p-5 mb-5">
-              <h3 className="font-bold text-gray-800 mb-3">📋 Registro manual de asistencia</h3>
-              <div className="overflow-auto max-h-96">
-                <table className="w-full text-sm">
-                  <thead><tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
-                    <th className="px-3 py-2 text-left">Nombre</th>
-                    <th className="px-3 py-2 text-left">Zona</th>
-                    <th className="px-3 py-2 text-left">Tipo</th>
-                    <th className="px-3 py-2 text-center">Presencial</th>
-                    <th className="px-3 py-2 text-center">Virtual</th>
-                    <th className="px-3 py-2 text-center">Estado</th>
-                  </tr></thead>
-                  <tbody>
-                    {delegados.filter(d => d.activo !== false).map(d => {
-                      const reg = quorumLista.find(q => q.delegado_id === d.id);
-                      return (
-                        <tr key={d.id} className={`border-b last:border-0 ${reg ? "bg-green-50" : ""}`}>
-                          <td className="px-3 py-2 font-medium text-xs">{d.nombre}</td>
-                          <td className="px-3 py-2 text-gray-500 text-xs">{d.zona}</td>
-                          <td className="px-3 py-2"><Badge color={d.tipo === "PRINCIPAL" ? "blue" : "yellow"}>{d.tipo}</Badge></td>
-                          <td className="px-3 py-2 text-center">
-                            <button onClick={async () => {
-                              await registrarAsistencia(d.id, "presencial");
-                              fetchQuorum().then(setQuorumLista);
-                            }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "presencial" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-green-100"}`}>
-                              🏢 Presencial
-                            </button>
-                          </td>
-                          <td className="px-3 py-2 text-center">
-                            <button onClick={async () => {
-                              await registrarAsistencia(d.id, "virtual");
-                              fetchQuorum().then(setQuorumLista);
-                            }} className={`px-2 py-1 rounded text-xs font-semibold ${reg?.tipo === "virtual" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-blue-100"}`}>
-                              💻 Virtual
-                            </button>
-                          </td>
-                          <td className="px-3 py-2 text-center">
-                            {reg ? <Badge color="green">✓ {reg.tipo}</Badge> : <Badge color="gray">Ausente</Badge>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
         {vista === "delegados" && (
           <div>
             <h2 className="text-blue-950 font-bold text-xl mb-4">Registro de delegados</h2>
             <p className="text-gray-600 text-sm mb-4">Asigna cédulas y activa/desactiva suplentes cuando reemplacen a un principal.</p>
-            {["SEGURIDAD", "AVIACION", "DIR. ÁREA NEGOCIOS 1", "DIR. ÁREA NEGOCIOS 2", "DIR. ÁREA NEGOCIOS 3", "ADMINISTRATIVOS"].map(zona => (
-              <div key={zona} className="mb-5">
-                <h3 className="font-bold text-blue-900 text-sm mb-2 bg-blue-50 px-3 py-1.5 rounded-lg inline-block uppercase tracking-wide">{zona}</h3>
-                <div className="bg-white rounded-xl border overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead><tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
-                      <th className="px-4 py-2 text-left">N°</th><th className="px-4 py-2 text-left">Nombre</th>
-                      <th className="px-4 py-2 text-left">Ciudad</th><th className="px-4 py-2 text-left">Tipo</th>
-                      <th className="px-4 py-2 text-left">Cédula</th><th className="px-4 py-2 text-center">Estado</th>
-                    </tr></thead>
-                    <tbody>
-                      {delegados.filter(d => d.zona === zona).map(d => (
-                        <tr key={d.id} className={`border-b last:border-0 ${d.activo === false ? "opacity-50 bg-gray-50" : ""}`}>
-                          <td className="px-4 py-2 text-gray-400">{d.id}</td>
-                          <td className="px-4 py-2 font-medium text-gray-900 text-xs">{d.nombre}</td>
-                          <td className="px-4 py-2 text-gray-500 text-xs">{d.ciudad}</td>
-                          <td className="px-4 py-2"><Badge color={d.tipo === "PRINCIPAL" ? "blue" : "yellow"}>{d.tipo}</Badge></td>
-                          <td className="px-4 py-2">
-                            <input value={d.cedula || ""} onChange={e => updateDelegado({ ...d, cedula: e.target.value })}
-                              placeholder="Cédula" className="border rounded px-2 py-1 text-xs font-mono w-32 focus:outline-none focus:ring-1 focus:ring-blue-400" />
-                          </td>
-                          <td className="px-4 py-2 text-center">
-                            <button onClick={() => updateDelegado({ ...d, activo: d.activo === false ? true : false })}
-                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${d.activo === false ? "bg-gray-200 text-gray-600" : "bg-green-100 text-green-700"}`}>
-                              {d.activo === false ? "Inactivo" : "Activo"}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ))}
+            <div className="bg-white rounded-xl border overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 border-b text-xs text-gray-500 uppercase">
+                    <th className="px-4 py-2 text-left">N°</th>
+                    <th className="px-4 py-2 text-left">Nombre</th>
+                    <th className="px-4 py-2 text-left">Ciudad</th>
+                    <th className="px-4 py-2 text-left">Tipo</th>
+                    <th className="px-4 py-2 text-left">Cédula</th>
+                    <th className="px-4 py-2 text-center">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {delegados.map(d => (
+                    <tr key={d.id} className={`border-b last:border-0 ${d.activo === false ? "opacity-50 bg-gray-50" : ""}`}>
+                      <td className="px-4 py-2 text-gray-400 font-mono text-xs">{d.id}</td>
+                      <td className="px-4 py-2 font-medium text-gray-900 text-xs">{d.nombre}</td>
+                      <td className="px-4 py-2 text-gray-500 text-xs">{d.ciudad}</td>
+                      <td className="px-4 py-2"><Badge color={d.tipo === "PRINCIPAL" ? "blue" : "yellow"}>{d.tipo}</Badge></td>
+                      <td className="px-4 py-2">
+                        <input value={d.cedula || ""} onChange={e => updateDelegado({ ...d, cedula: e.target.value })}
+                          placeholder="Cédula" className="border rounded px-2 py-1 text-xs font-mono w-32 focus:outline-none focus:ring-1 focus:ring-blue-400" />
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <button onClick={() => updateDelegado({ ...d, activo: d.activo === false ? true : false })}
+                          className={`px-2 py-0.5 rounded-full text-xs font-semibold ${d.activo === false ? "bg-gray-200 text-gray-600" : "bg-green-100 text-green-700"}`}>
+                          {d.activo === false ? "Inactivo" : "Activo"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
@@ -949,25 +777,20 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
               <button onClick={exportar} className="px-4 py-2 bg-blue-900 text-white text-sm rounded-xl font-semibold hover:bg-blue-800">📥 Exportar</button>
             </div>
             <div className="space-y-5">
-              {Object.values(modulos).sort((a,b) => (a.orden||99)-(b.orden||99)).map(m => {
+              {sortedModulos.map(m => {
                 const totalVotos = Object.keys(m.votos || {}).length;
                 const r = getResultados(m);
                 return (
                   <div key={m.id} className="bg-white rounded-2xl border shadow-sm p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <div><div className="font-bold text-gray-900">{m.titulo}</div><div className="text-gray-500 text-xs">{totalVotos} / {totalDelegados} votos</div></div>
+                      <div><div className="font-bold text-gray-900">{m.orden}. {m.titulo}</div><div className="text-gray-500 text-xs">{totalVotos} / {totalDelegados} votos</div></div>
                       {m.cerrada ? <Badge color="green">Cerrada ✓</Badge> : m.activa ? <Badge color="blue">En curso</Badge> : <Badge color="gray">Pendiente</Badge>}
                     </div>
                     {(m.tipo === "plancha" || m.tipo === "opcion_multiple") && totalVotos > 0 && (
                       <div className="space-y-2">
                         {Object.entries(r).map(([k, v]) => {
                           const op = m.opciones?.find(o => o.id === k);
-                          return (
-                            <div key={k}>
-                              <div className="text-sm font-medium text-gray-700 mb-1">{op ? (op.nombre || op.texto) : (k === "blanco" ? "Voto en blanco" : k)}</div>
-                              <ProgressBar value={v} total={totalVotos} color="red" />
-                            </div>
-                          );
+                          return (<div key={k}><div className="text-sm font-medium text-gray-700 mb-1">{op ? (op.nombre || op.texto) : (k === "blanco" ? "Voto en blanco" : k)}</div><ProgressBar value={v} total={totalVotos} color="red" /></div>);
                         })}
                       </div>
                     )}
@@ -1000,34 +823,11 @@ function PanelAdmin({ modulos, setModulos, delegados, setDelegados, onExit }) {
             </div>
           </div>
         )}
-        {vista === "quorum" && (
-          <PanelQuorum
-            delegados={delegados}
-            quorumAsistentes={quorumAsistentes}
-            quorumConfig={quorumConfig}
-            onUpdateConfig={async (config) => {
-              setQuorumConfig(config);
-              await saveQuorumConfig(config);
-            }}
-            onRegistrarManual={async (delegadoId, tipo) => {
-              await registrarAsistencia(delegadoId, tipo);
-              const q = await fetchQuorum();
-              setQuorumAsistentes(q);
-            }}
-            onLimpiar={async () => {
-              if (confirm("¿Reiniciar toda la lista de asistencia?")) {
-                await limpiarQuorum();
-                setQuorumAsistentes([]);
-              }
-            }}
-          />
-        )}
       </div>
     </div>
   );
 }
 
-// ─── LOGIN ADMIN ──────────────────────────────────────────────────────────────
 function LoginAdmin({ onLogin, onVolver }) {
   const [pass, setPass] = useState(""); const [error, setError] = useState("");
   return (
@@ -1043,8 +843,7 @@ function LoginAdmin({ onLogin, onVolver }) {
             onKeyDown={e => e.key === "Enter" && (pass === ADMIN_PASSWORD ? (setError(""), onLogin()) : setError("Contraseña incorrecta"))}
             className="w-full bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-blue-400" placeholder="••••••••" />
           {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
-          <button onClick={() => pass === ADMIN_PASSWORD ? (setError(""), onLogin()) : setError("Contraseña incorrecta")}
-            className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl">Ingresar</button>
+          <button onClick={() => pass === ADMIN_PASSWORD ? (setError(""), onLogin()) : setError("Contraseña incorrecta")} className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl">Ingresar</button>
           <button onClick={onVolver} className="mt-2 w-full py-2 text-blue-300 text-sm hover:text-white">← Volver</button>
         </div>
       </div>
@@ -1052,11 +851,9 @@ function LoginAdmin({ onLogin, onVolver }) {
   );
 }
 
-// ─── PANTALLA PÚBLICA ─────────────────────────────────────────────────────────
 function PantallaPublica({ modulos, delegados, onVolver }) {
   const totalDelegados = delegados.filter(d => d.activo !== false).length;
-  const activos = Object.values(modulos).filter(m => m.activa || m.cerrada);
-
+  const activos = Object.values(modulos).filter(m => m.activa || m.cerrada).sort((a,b) => (a.orden||99)-(b.orden||99));
   const getResultados = (m) => {
     if (!m.votos) return {};
     if (m.tipo === "plancha" || m.tipo === "opcion_multiple") {
@@ -1071,7 +868,6 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
     });
     return conteo;
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
       <div className="bg-white/10 backdrop-blur border-b border-white/20 px-6 py-4 text-center">
@@ -1088,7 +884,7 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
             return (
               <div key={m.id} className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-5">
                 <div className="flex items-start justify-between mb-3">
-                  <div><div className="text-white font-bold">{m.titulo}</div><div className="text-blue-200 text-xs">{totalVotos}/{totalDelegados} votos</div></div>
+                  <div><div className="text-white font-bold">{m.orden}. {m.titulo}</div><div className="text-blue-200 text-xs">{totalVotos}/{totalDelegados} votos</div></div>
                   {m.cerrada ? <Badge color="green">Cerrada ✓</Badge> : <Badge color="blue">En curso</Badge>}
                 </div>
                 <ProgressBar value={totalVotos} total={totalDelegados} color="red" />
@@ -1096,12 +892,7 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
                   <div className="mt-3 space-y-1.5">
                     {Object.entries(r).map(([k, v]) => {
                       const op = m.opciones?.find(o => o.id === k);
-                      return (
-                        <div key={k}>
-                          <div className="text-blue-100 text-xs mb-0.5">{op ? (op.nombre || op.texto) : (k === "blanco" ? "Voto en blanco" : k)}</div>
-                          <ProgressBar value={v} total={totalVotos} color="red" />
-                        </div>
-                      );
+                      return (<div key={k}><div className="text-blue-100 text-xs mb-0.5">{op ? (op.nombre || op.texto) : (k === "blanco" ? "Voto en blanco" : k)}</div><ProgressBar value={v} total={totalVotos} color="red" /></div>);
                     })}
                   </div>
                 )}
@@ -1132,113 +923,6 @@ function PantallaPublica({ modulos, delegados, onVolver }) {
   );
 }
 
-
-// ─── PANTALLA QUÓRUM DELEGADO ─────────────────────────────────────────────────
-
-// ─── PANEL QUÓRUM ADMIN ───────────────────────────────────────────────────────
-function PanelQuorum({ delegados, quorumAsistentes, quorumConfig, onUpdateConfig, onRegistrarManual, onLimpiar }) {
-  const [minimoInput, setMinimoInput] = useState(quorumConfig?.minimo || 21);
-  const [busqueda, setBusqueda] = useState("");
-
-  const totalDelegados = delegados.filter(d => d.activo !== false).length;
-  const presentes = quorumAsistentes.length;
-  const minimo = quorumConfig?.minimo || 21;
-  const pct = totalDelegados > 0 ? Math.round(presentes / totalDelegados * 100) : 0;
-  const hayQuorum = presentes >= minimo;
-
-  const getAsistente = (delegadoId) => quorumAsistentes.find(q => q.delegado_id === delegadoId);
-  const delegadosFiltrados = delegados.filter(d => d.activo !== false && d.nombre.toLowerCase().includes(busqueda.toLowerCase()));
-
-  // Group by zona
-  const zonas = ["SEGURIDAD", "AVIACION", "DIR. ÁREA NEGOCIOS 1", "DIR. ÁREA NEGOCIOS 2", "DIR. ÁREA NEGOCIOS 3", "ADMINISTRATIVOS"];
-
-  return (
-    <div>
-      <h2 className="text-blue-950 font-bold text-xl mb-4">Verificación de Quórum</h2>
-
-      {/* Contador principal */}
-      <div className={`rounded-2xl p-6 mb-5 text-white ${hayQuorum ? "bg-green-700" : "bg-red-700"}`}>
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <div className="text-5xl font-black">{presentes} / {totalDelegados}</div>
-            <div className="text-sm opacity-80 mt-1">delegados presentes · {pct}%</div>
-            <div className="text-lg font-bold mt-1">{hayQuorum ? "✅ QUÓRUM ALCANZADO" : `⏳ Faltan ${minimo - presentes} delegados`}</div>
-          </div>
-          <div className="text-6xl">{hayQuorum ? "✅" : "⏳"}</div>
-        </div>
-        <div className="bg-white/20 rounded-full h-4">
-          <div className="bg-white h-4 rounded-full transition-all duration-700" style={{ width: `${Math.min(pct, 100)}%` }} />
-        </div>
-      </div>
-
-      {/* Configuración */}
-      <div className="bg-white rounded-xl border p-4 mb-4 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-3">⚙️ Configuración de quórum</h3>
-        <div className="flex gap-3 items-end flex-wrap">
-          <div>
-            <label className="text-xs text-gray-600 font-semibold block mb-1">Mínimo de delegados para quórum</label>
-            <input type="number" value={minimoInput} onChange={e => setMinimoInput(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 text-sm w-24 font-bold text-center" min={1} max={totalDelegados} />
-          </div>
-          <button onClick={() => onUpdateConfig({ ...quorumConfig, minimo: minimoInput })}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-semibold hover:bg-blue-700">Guardar</button>
-          <button onClick={() => onUpdateConfig({ ...quorumConfig, abierto: !quorumConfig?.abierto })}
-            className={`px-4 py-2 text-white text-sm rounded-lg font-semibold ${quorumConfig?.abierto ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
-            {quorumConfig?.abierto ? "🔒 Cerrar registro" : "🔓 Abrir registro"}
-          </button>
-          <button onClick={onLimpiar} className="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg font-semibold hover:bg-gray-600">
-            🗑️ Reiniciar asistencia
-          </button>
-        </div>
-      </div>
-
-      {/* Lista de delegados */}
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <div className="p-3 border-b bg-gray-50 flex items-center gap-3">
-          <input value={busqueda} onChange={e => setBusqueda(e.target.value)}
-            placeholder="🔍 Buscar delegado..." className="flex-1 border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
-          <span className="text-xs text-gray-500 whitespace-nowrap">{presentes} confirmados</span>
-        </div>
-        <div className="max-h-96 overflow-y-auto">
-          {zonas.map(zona => {
-            const dels = delegadosFiltrados.filter(d => d.zona === zona);
-            if (dels.length === 0) return null;
-            return (
-              <div key={zona}>
-                <div className="bg-blue-50 px-4 py-1.5 text-xs font-bold text-blue-800 uppercase tracking-wide border-b">{zona}</div>
-                {dels.map(d => {
-                  const asistente = getAsistente(d.id);
-                  return (
-                    <div key={d.id} className={`flex items-center justify-between px-4 py-2.5 border-b last:border-0 ${asistente ? "bg-green-50" : ""}`}>
-                      <div>
-                        <div className={`text-sm font-medium ${asistente ? "text-green-800" : "text-gray-800"}`}>{d.nombre}</div>
-                        <div className="text-xs text-gray-400">{d.ciudad} · {d.tipo}{asistente ? ` · ${asistente.tipo === "virtual" ? "🖥️ Virtual" : "🏢 Presencial"} · ${new Date(asistente.hora).toLocaleTimeString("es-CO", {hour: "2-digit", minute: "2-digit"})}` : ""}</div>
-                      </div>
-                      <div className="flex items-center gap-2 ml-2">
-                        {asistente ? (
-                          <span className="text-green-600 font-bold text-sm">✅ Presente</span>
-                        ) : (
-                          <div className="flex gap-1">
-                            <button onClick={() => onRegistrarManual(d.id, "presencial")}
-                              className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded font-semibold hover:bg-blue-200">🏢 Pres.</button>
-                            <button onClick={() => onRegistrarManual(d.id, "virtual")}
-                              className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded font-semibold hover:bg-purple-200">🖥️ Virt.</button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── INICIO ───────────────────────────────────────────────────────────────────
 function PantallaInicio({ onVotante, onAdmin, onPublico, onQuorum }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-center px-4">
@@ -1259,36 +943,31 @@ function PantallaInicio({ onVotante, onAdmin, onPublico, onQuorum }) {
   );
 }
 
-// ─── APP PRINCIPAL ────────────────────────────────────────────────────────────
 export default function App() {
   const [pantalla, setPantalla] = useState("inicio");
   const [adminLogueado, setAdminLogueado] = useState(false);
   const [delegadoActivo, setDelegadoActivo] = useState(null);
   const [modulos, setModulos] = useState(MODULOS_INICIALES);
   const [delegados, setDelegados] = useState(DELEGADOS_INICIALES);
-  const [quorumAsistentes, setQuorumAsistentes] = useState([]);
   const [quorumConfig, setQuorumConfig] = useState({ id: 1, minimo: 21, abierto: false });
   const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
 
-  // Carga inicial y polling cada 3 segundos
   useEffect(() => {
     const init = async () => {
       await initDB(MODULOS_INICIALES, DELEGADOS_INICIALES);
-      const [mods, dels, q, qc] = await Promise.all([fetchModulos(), fetchDelegados(), fetchQuorum(), fetchQuorumConfig()]);
+      const [mods, dels, qc] = await Promise.all([fetchModulos(), fetchDelegados(), fetchQuorumConfig()]);
       if (mods) setModulos(mods);
       if (dels.length > 0) setDelegados(dels);
-      setQuorumAsistentes(q);
       setQuorumConfig(qc);
       setLoading(false);
     };
     init();
-    fetchQuorumConfig().then(setQuorumConfig);
     intervalRef.current = setInterval(async () => {
-      const [mods, dels] = await Promise.all([fetchModulos(), fetchDelegados()]);
+      const [mods, dels, qc] = await Promise.all([fetchModulos(), fetchDelegados(), fetchQuorumConfig()]);
       if (mods) setModulos(mods);
       if (dels.length > 0) setDelegados(dels);
-      fetchQuorumConfig().then(setQuorumConfig);
+      setQuorumConfig(qc);
     }, 3000);
     return () => clearInterval(intervalRef.current);
   }, []);
